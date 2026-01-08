@@ -25,14 +25,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [theme, mounted]);
 
-  // Prevent flash of unstyled content
-  if (!mounted) {
-    return (
-      <div style={{ visibility: 'hidden' }}>
-        {children}
-      </div>
-    );
-  }
-
-  return <>{children}</>;
+  // Prevent flash of unstyled content; always render a wrapper to keep the tree consistent
+  return (
+    <div style={{ visibility: mounted ? 'visible' : 'hidden' }}>
+      {children}
+    </div>
+  );
 }
