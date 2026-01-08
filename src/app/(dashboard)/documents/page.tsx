@@ -314,7 +314,7 @@ export default function DocumentsPage() {
       {/* Documents */}
       <div>
         <h2 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">
-          {currentFolder.length > 1 ? `Files in ${currentFolder[currentFolder.length - 1]}` : 'Recent Files'}
+          {currentFolder.length > 1 ? t('documents.filesIn', { folder: currentFolder[currentFolder.length - 1] }) : t('documents.recentFiles')}
         </h2>
         
         {filteredDocuments.length === 0 ? (

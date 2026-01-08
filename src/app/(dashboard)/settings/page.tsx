@@ -120,7 +120,7 @@ export default function SettingsPage() {
           {activeTab === 'company' && (
             <>
               <Card>
-                <CardHeader title="Company Information" description="Manage your organization details" />
+                <CardHeader title={t('settings.company.title')} description={t('settings.company.description')} />
                 <div className="space-y-4">
                   <Input label="Company Name" defaultValue="Stroikefy Construction" />
                   <Input label="Website" type="url" defaultValue="https://stroikefy.com" />
@@ -141,7 +141,7 @@ export default function SettingsPage() {
           {activeTab === 'notifications' && (
             <>
               <Card>
-                <CardHeader title="Email Notifications" description="Choose what emails you want to receive" />
+                <CardHeader title={t('settings.notifications.emailTitle')} description={t('settings.notifications.emailDescription')} />
                 <div className="space-y-4">
                   {[
                     { title: 'Project Updates', description: 'Get notified when projects are updated' },
@@ -166,7 +166,7 @@ export default function SettingsPage() {
               </Card>
 
               <Card>
-                <CardHeader title="Push Notifications" description="Configure mobile and desktop notifications" />
+                <CardHeader title={t('settings.notifications.pushTitle')} description={t('settings.notifications.pushDescription')} />
                 <div className="space-y-4">
                   {[
                     { title: 'Desktop Notifications', description: 'Show notifications on your desktop', icon: Monitor },
@@ -198,7 +198,7 @@ export default function SettingsPage() {
           {activeTab === 'appearance' && (
             <>
               <Card>
-                <CardHeader title="Theme" description="Choose your preferred theme" />
+                <CardHeader title={t('settings.theme.title')} description={t('settings.theme.description')} />
                 <div className="grid grid-cols-3 gap-4">
                   {themeOptions.map(option => {
                     const Icon = option.icon;
@@ -233,7 +233,7 @@ export default function SettingsPage() {
               </Card>
 
               <Card>
-                <CardHeader title="Language & Region" description="Set your language and regional preferences" />
+                <CardHeader title={t('settings.languageRegion.title')} description={t('settings.languageRegion.description')} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Select
                     label="Language"
@@ -282,7 +282,7 @@ export default function SettingsPage() {
           {activeTab === 'security' && (
             <>
               <Card>
-                <CardHeader title="Change Password" description="Update your account password" />
+                <CardHeader title={t('settings.security.changePasswordTitle')} description={t('settings.security.changePasswordDescription')} />
                 <div className="space-y-4 max-w-md">
                   <Input label="Current Password" type="password" />
                   <Input label="New Password" type="password" />
@@ -292,7 +292,7 @@ export default function SettingsPage() {
               </Card>
 
               <Card>
-                <CardHeader title="Two-Factor Authentication" description="Add an extra layer of security" />
+                <CardHeader title={t('settings.security.twoFactorTitle')} description={t('settings.security.twoFactorDescription')} />
                 <div className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
@@ -308,7 +308,7 @@ export default function SettingsPage() {
               </Card>
 
               <Card>
-                <CardHeader title="Sessions" description="Manage your active sessions" />
+                <CardHeader title={t('settings.security.sessionsTitle')} description={t('settings.security.sessionsDescription')} />
                 <div className="space-y-3">
                   {[
                     { device: 'Chrome on Windows', location: 'New York, US', current: true },
@@ -340,7 +340,7 @@ export default function SettingsPage() {
           {activeTab === 'billing' && (
             <>
               <Card>
-                <CardHeader title="Current Plan" description="Manage your subscription" />
+                <CardHeader title={t('settings.billing.currentPlanTitle')} description={t('settings.billing.currentPlanDescription')} />
                 <div className="p-6 bg-gradient-to-r from-primary-500 to-primary-700 rounded-lg text-white mb-6">
                   <h3 className="text-2xl font-bold mb-1">Pro Plan</h3>
                   <p className="text-primary-100 mb-4">$99/month • Billed annually</p>
@@ -366,7 +366,7 @@ export default function SettingsPage() {
               </Card>
 
               <Card>
-                <CardHeader title="Payment Method" />
+                <CardHeader title={t('settings.billing.paymentMethodTitle')} />
                 <div className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <CreditCard className="h-5 w-5 text-surface-400" />
@@ -386,9 +386,9 @@ export default function SettingsPage() {
             <>
               <Card>
                 <CardHeader 
-                  title="Team Members" 
-                  description="Manage your team"
-                  action={<Button size="sm" leftIcon={<Users className="h-4 w-4" />}>Invite</Button>}
+                  title={t('settings.team.title')} 
+                  description={t('settings.team.description')}
+                  action={<Button size="sm" leftIcon={<Users className="h-4 w-4" />}>{t('settings.team.invite') || 'Invite'}</Button>}
                 />
                 <div className="space-y-3">
                   {[
@@ -414,7 +414,7 @@ export default function SettingsPage() {
               </Card>
 
               <Card>
-                <CardHeader title="Roles & Permissions" description="Configure team access levels" />
+                <CardHeader title={t('settings.team.rolesTitle')} description={t('settings.team.rolesDescription')} />
                 <div className="space-y-3">
                   {[
                     { role: 'Admin', description: 'Full access to all features', permissions: 'All' },

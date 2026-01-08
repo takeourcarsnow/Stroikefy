@@ -268,13 +268,19 @@
     "title": "Time Tracking",
     "subtitle": "Track employee work hours and attendance",
     "newEntry": "New Entry",
+    "addEntryTitle": "Add Time Entry",
+    "weeklyHoursTitle": "Weekly Hours",
     "date": "Date",
     "employee": "Employee",
     "project": "Project",
     "task": "Task",
+    "clockIn": "Clock In",
+    "clockOut": "Clock Out",
     "startTime": "Start Time",
     "endTime": "End Time",
     "breakTime": "Break Time",
+    "breakDurationMinutes": "Break Duration (minutes)",
+    "notes": "Notes",
     "totalHours": "Total Hours",
     "status": {
       "pending": "Pending",
@@ -366,6 +372,15 @@
       "title": "No items found",
       "description": "Try adjusting your search or add new inventory items"
     },
+    "noOrders": "No orders yet",
+    "noOrdersDescription": "Create your first order to restock inventory",
+    "lowStockCard": {
+      "allStockedUp": "All stocked up!",
+      "noLowStockDescription": "No items are running low on stock",
+      "currentStock": "Current Stock",
+      "minimumLevel": "Minimum Level",
+      "reorderQuantity": "Reorder Quantity"
+    },
     "stockStatus": {
       "in-stock": "In Stock",
       "low-stock": "Low Stock",
@@ -394,6 +409,31 @@
       "out": "Stock Out",
       "transfer": "Transfer",
       "adjustment": "Adjustment"
+    },
+    "addItem": {
+      "title": "Add Inventory Item",
+      "itemName": "Item Name",
+      "sku": "SKU",
+      "description": "Description",
+      "category": "Category",
+      "selectCategory": "Select category",
+      "unit": "Unit",
+      "quantity": "Quantity",
+      "minQuantity": "Min Quantity",
+      "reorderQty": "Reorder Qty",
+      "unitPrice": "Unit Price",
+      "location": "Location",
+      "supplier": "Supplier",
+      "submit": "Add Item"
+    },
+    "order": {
+      "title": "New Order",
+      "selectItem": "Select item to order",
+      "quantity": "Quantity",
+      "supplier": "Supplier",
+      "expectedDelivery": "Expected Delivery Date",
+      "notes": "Notes",
+      "reorderNow": "Reorder Now"
     }
   },
   "documents": {
@@ -415,6 +455,8 @@
     "recent": "Recent",
     "searchDocuments": "Search documents...",
     "noDocumentsFound": "No documents found",
+    "filesIn": "Files in {folder}",
+    "recentFiles": "Recent Files",
     "documentType": {
       "contract": "Contract",
       "permit": "Permit",
@@ -480,6 +522,54 @@
       "changePhoto": "Change Photo",
       "jobTitle": "Job Title",
       "bioPlaceholder": "Tell us about yourself..."
+    },
+    "notifications": {
+      "emailTitle": "Email Notifications",
+      "emailDescription": "Choose what emails you want to receive",
+      "pushTitle": "Push Notifications",
+      "pushDescription": "Configure mobile and desktop notifications"
+    },
+    "theme": {
+      "title": "Theme",
+      "description": "Choose your preferred theme"
+    },
+    "languageRegion": {
+      "title": "Language & Region",
+      "description": "Set your language and regional preferences"
+    },
+    "security": {
+      "changePasswordTitle": "Change Password",
+      "changePasswordDescription": "Update your account password",
+      "twoFactorTitle": "Two-Factor Authentication",
+      "twoFactorDescription": "Add an extra layer of security",
+      "sessionsTitle": "Sessions",
+      "sessionsDescription": "Manage your active sessions"
+    },
+    "billing": {
+      "currentPlanTitle": "Current Plan",
+      "currentPlanDescription": "Manage your subscription",
+      "paymentMethodTitle": "Payment Method"
+    },
+    "team": {
+      "title": "Team Members",
+      "description": "Manage your team",
+      "invite": "Invite",
+      "rolesTitle": "Roles & Permissions",
+      "rolesDescription": "Configure team access levels"
+    },
+    "noOrders": "No orders yet",
+    "dataSection": {
+      "exportTitle": "Export Data",
+      "exportDescription": "Download your data",
+      "importTitle": "Import Data",
+      "importDescription": "Upload data from external sources"
+    },
+    "danger": {
+      "title": "Danger Zone",
+      "description": "Irreversible actions",
+      "deleteAccountTitle": "Delete Account",
+      "deleteAccountConfirm": "Once you delete your account, there is no going back. Please be certain.",
+      "deleteButton": "Delete Account"
     },
     "company": {
       "title": "Company Information",

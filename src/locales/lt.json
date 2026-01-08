@@ -266,13 +266,19 @@
     "title": "Darbo laikas",
     "subtitle": "Sekite darbuotojų darbo valandas ir lankomumą",
     "newEntry": "Naujas įrašas",
+    "addEntryTitle": "Pridėti laiko įrašą",
+    "weeklyHoursTitle": "Savaitės valandos",
     "date": "Data",
     "employee": "Darbuotojas",
     "project": "Projektas",
     "task": "Užduotis",
+    "clockIn": "Atėjimas",
+    "clockOut": "Išėjimas",
     "startTime": "Pradžios laikas",
     "endTime": "Pabaigos laikas",
     "breakTime": "Pertraukos laikas",
+    "breakDurationMinutes": "Pertraukos trukmė (minutėmis)",
+    "notes": "Pastabos",
     "totalHours": "Iš viso valandų",
     "status": {
       "pending": "Laukiama",
@@ -364,6 +370,15 @@
       "title": "Prekių nerasta",
       "description": "Pabandykite pakeisti paiešką arba pridėti naują prekę"
     },
+    "noOrders": "Užsakymų nėra",
+    "noOrdersDescription": "Sukurkite pirmąjį užsakymą, kad atkurti atsargas",
+    "lowStockCard": {
+      "allStockedUp": "Viską užpildyta!",
+      "noLowStockDescription": "Nėra prekių, kurioms trūksta atsargų",
+      "currentStock": "Dabartinės atsargos",
+      "minimumLevel": "Min. lygis",
+      "reorderQuantity": "Perkėlimo kiekis"
+    },
     "stockStatus": {
       "in-stock": "Yra sandėlyje",
       "low-stock": "Mažos atsargos",
@@ -392,6 +407,31 @@
       "out": "Išdavimas",
       "transfer": "Perkėlimas",
       "adjustment": "Koregavimas"
+    },
+    "addItem": {
+      "title": "Pridėti prekę",
+      "itemName": "Prekės pavadinimas",
+      "sku": "Prekės kodas",
+      "description": "Aprašymas",
+      "category": "Kategorija",
+      "selectCategory": "Pasirinkite kategoriją",
+      "unit": "Vienetas",
+      "quantity": "Kiekis",
+      "minQuantity": "Min. kiekis",
+      "reorderQty": "Perkėlimo kiekis",
+      "unitPrice": "Vieneto kaina",
+      "location": "Vieta",
+      "supplier": "Tiekėjas",
+      "submit": "Pridėti prekę"
+    },
+    "order": {
+      "title": "Naujas užsakymas",
+      "selectItem": "Pasirinkite prekę užsakymui",
+      "quantity": "Kiekis",
+      "supplier": "Tiekėjas",
+      "expectedDelivery": "Numatoma pristatymo data",
+      "notes": "Pastabos",
+      "reorderNow": "Užsakyti dabar"
     }
   },
 
@@ -414,6 +454,8 @@
     "recent": "Naujausi",
     "searchDocuments": "Ieškoti dokumentų...",
     "noDocumentsFound": "Dokumentų nerasta",
+    "filesIn": "Failai aplanke {folder}",
+    "recentFiles": "Naujausi failai",
     "documentType": {
       "contract": "Sutartis",
       "permit": "Leidimas",
@@ -479,6 +521,54 @@
       "changePhoto": "Keisti nuotrauką",
       "jobTitle": "Pareigos",
       "bioPlaceholder": "Papasakokite apie save..."
+    },
+    "notifications": {
+      "emailTitle": "El. pašto pranešimai",
+      "emailDescription": "Pasirinkite, kokius el. laiškus norite gauti",
+      "pushTitle": "Push pranešimai",
+      "pushDescription": "Konfigūruokite mobiliojo ir darbalaukio pranešimus"
+    },
+    "theme": {
+      "title": "Tema",
+      "description": "Pasirinkite pageidaujamą temą"
+    },
+    "languageRegion": {
+      "title": "Kalba ir regionas",
+      "description": "Nustatykite kalbą ir regioninius parametrus"
+    },
+    "security": {
+      "changePasswordTitle": "Keisti slaptažodį",
+      "changePasswordDescription": "Atnaujinkite savo paskyros slaptažodį",
+      "twoFactorTitle": "Dviejų veiksnių autentifikacija",
+      "twoFactorDescription": "Pridėkite papildomą saugumo sluoksnį",
+      "sessionsTitle": "Seansai",
+      "sessionsDescription": "Tvarkykite savo aktyvius seansus"
+    },
+    "billing": {
+      "currentPlanTitle": "Dabartinis planas",
+      "currentPlanDescription": "Tvarkykite savo prenumeratą",
+      "paymentMethodTitle": "Mokėjimo metodas"
+    },
+    "team": {
+      "title": "Komandos nariai",
+      "description": "Tvarkykite savo komandą",
+      "invite": "Kviesti",
+      "rolesTitle": "Vaidmenys ir leidimai",
+      "rolesDescription": "Konfigūruokite prieigos lygius"
+    },
+    "noOrders": "Užsakymų nėra",
+    "dataSection": {
+      "exportTitle": "Eksportuoti duomenis",
+      "exportDescription": "Atsisiųskite savo duomenis",
+      "importTitle": "Importuoti duomenis",
+      "importDescription": "Įkelkite duomenis iš išorinių šaltinių"
+    },
+    "danger": {
+      "title": "Pavojų zona",
+      "description": "Negrįžtami veiksmai",
+      "deleteAccountTitle": "Ištrinti paskyrą",
+      "deleteAccountConfirm": "Kai ištrinsite paskyrą, nėra galimybės jos atkurti. Prašome būti tikriems.",
+      "deleteButton": "Ištrinti paskyrą"
     },
     "company": {
       "title": "Įmonės informacija",

@@ -308,11 +308,11 @@ export default function InventoryPage() {
           ) : (
             <EmptyState
               icon={<Package />}
-              title="No items found"
-              description="Try adjusting your search or add new inventory items"
+              title={t('inventory.noItems.title')}
+              description={t('inventory.noItems.description')}
               action={
                 <Button onClick={() => setShowAddItemModal(true)} leftIcon={<Plus className="h-4 w-4" />}>
-                  Add Item
+                  {t('inventory.newItem')}
                 </Button>
               }
             />
@@ -336,11 +336,11 @@ export default function InventoryPage() {
           ) : (
             <EmptyState
               icon={<ShoppingCart />}
-              title="No orders yet"
-              description="Create your first order to restock inventory"
+              title={t('inventory.noOrders')}
+              description={t('inventory.noOrdersDescription')}
               action={
                 <Button onClick={() => setShowOrderModal(true)} leftIcon={<Plus className="h-4 w-4" />}>
-                  New Order
+                  {t('inventory.newOrder')}
                 </Button>
               }
             />
@@ -372,15 +372,15 @@ export default function InventoryPage() {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-surface-500">Current Stock</span>
+                      <span className="text-surface-500">{t('inventory.lowStockCard.currentStock')}</span>
                       <span className="font-medium text-red-600">{item.quantity} {item.unit}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-surface-500">Minimum Level</span>
+                      <span className="text-surface-500">{t('inventory.lowStockCard.minimumLevel')}</span>
                       <span className="font-medium text-surface-900 dark:text-white">{item.minQuantity} {item.unit}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-surface-500">Reorder Quantity</span>
+                      <span className="text-surface-500">{t('inventory.lowStockCard.reorderQuantity')}</span>
                       <span className="font-medium text-surface-900 dark:text-white">{item.maxQuantity} {item.unit}</span>
                     </div>
                   </div>
@@ -394,7 +394,7 @@ export default function InventoryPage() {
                       }}
                     >
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      Reorder Now
+                      {t('inventory.order.reorderNow')}
                     </Button>
                   </div>
                 </Card>
@@ -403,8 +403,8 @@ export default function InventoryPage() {
           ) : (
             <Card className="text-center py-12">
               <Box className="h-12 w-12 text-green-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-2">All stocked up!</h3>
-              <p className="text-surface-500">No items are running low on stock</p>
+              <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-2">{t('inventory.lowStockCard.allStockedUp')}</h3>
+              <p className="text-surface-500">{t('inventory.lowStockCard.noLowStockDescription')}</p>
             </Card>
           )}
         </div>
@@ -414,33 +414,33 @@ export default function InventoryPage() {
       <Modal
         isOpen={showAddItemModal}
         onClose={() => setShowAddItemModal(false)}
-        title="Add Inventory Item"
+        title={t('inventory.addItem.title') }
         size="lg"
       >
         <form className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Item Name" placeholder="Steel Beam" />
-            <Input label="SKU" placeholder="STL-001" />
+            <Input label={t('inventory.addItem.itemName')} placeholder={t('inventory.addItem.itemName')} />
+            <Input label={t('inventory.addItem.sku')} placeholder={t('inventory.addItem.sku')} />
           </div>
-          <Textarea label="Description" placeholder="Item description..." />
+          <Textarea label={t('inventory.addItem.description')} placeholder={t('inventory.addItem.description')} />
           <div className="grid grid-cols-2 gap-4">
             <Select
-              label="Category"
+              label={t('inventory.addItem.category')}
               options={categoryOptions.filter(c => c.value !== 'all')}
-              placeholder="Select category"
+              placeholder={t('inventory.addItem.selectCategory')}
             />
-            <Input label="Unit" placeholder="pcs, kg, m, etc." />
+            <Input label={t('inventory.addItem.unit')} placeholder={t('inventory.addItem.unit')} />
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <Input label="Quantity" type="number" placeholder="0" />
-            <Input label="Min Quantity" type="number" placeholder="10" />
-            <Input label="Reorder Qty" type="number" placeholder="50" />
+            <Input label={t('inventory.addItem.quantity')} type="number" placeholder={t('inventory.addItem.quantity')} />
+            <Input label={t('inventory.addItem.minQuantity')} type="number" placeholder={t('inventory.addItem.minQuantity')} />
+            <Input label={t('inventory.addItem.reorderQty')} type="number" placeholder={t('inventory.addItem.reorderQty')} />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Unit Price" type="number" placeholder="0.00" leftIcon={<DollarSign className="h-4 w-4" />} />
-            <Input label="Location" placeholder="Warehouse A, Shelf 3" />
+            <Input label={t('inventory.addItem.unitPrice')} type="number" placeholder={t('inventory.addItem.unitPrice')} leftIcon={<DollarSign className="h-4 w-4" />} />
+            <Input label={t('inventory.addItem.location')} placeholder={t('inventory.addItem.location')} />
           </div>
-          <Input label="Supplier" placeholder="Supplier name" />
+          <Input label={t('inventory.addItem.supplier')} placeholder={t('inventory.addItem.supplier')} />
         </form>
         <ModalFooter>
           <Button variant="ghost" onClick={() => setShowAddItemModal(false)}>Cancel</Button>
@@ -483,28 +483,28 @@ export default function InventoryPage() {
             </>
           ) : (
             <Select
-              label="Item"
+              label={t('inventory.order.selectItem')}
               options={inventoryItems.map((i: InventoryItem) => ({ value: i.id, label: i.name }))}
-              placeholder="Select item to order"
+              placeholder={t('inventory.order.selectItem')}
             />
           )}
           
           <Input 
-            label="Quantity" 
+            label={t('inventory.order.quantity')} 
             type="number" 
-            placeholder={selectedItem?.maxQuantity?.toString() || "0"} 
+            placeholder={selectedItem?.maxQuantity?.toString() || t('inventory.order.quantity')} 
             defaultValue={selectedItem?.maxQuantity}
           />
-          <Input label="Supplier" placeholder={selectedItem?.supplier || "Supplier name"} defaultValue={selectedItem?.supplier} />
-          <Input label="Expected Delivery Date" type="date" />
-          <Textarea label="Notes" placeholder="Order notes..." />
+          <Input label={t('inventory.order.supplier')} placeholder={selectedItem?.supplier || t('inventory.order.supplier')} defaultValue={selectedItem?.supplier} />
+          <Input label={t('inventory.order.expectedDelivery')} type="date" />
+          <Textarea label={t('inventory.order.notes')} placeholder={t('inventory.order.notes')} />
         </form>
         <ModalFooter>
           <Button variant="ghost" onClick={() => {
             setShowOrderModal(false);
             setSelectedItem(null);
-          }}>Cancel</Button>
-          <Button>Place Order</Button>
+          }}>{t('common.cancel')}</Button>
+          <Button>{t('inventory.order.reorderNow')}</Button>
         </ModalFooter>
       </Modal>
     </div>
