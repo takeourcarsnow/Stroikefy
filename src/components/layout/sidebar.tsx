@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useSidebarStore, useAuthStore } from '@/store';
+import { useTranslation } from '@/hooks';
 import {
   LayoutDashboard,
   FolderKanban,
@@ -22,22 +23,23 @@ import {
 } from 'lucide-react';
 
 const navigationItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Projects', href: '/projects', icon: FolderKanban },
-  { name: 'Workforce', href: '/workforce', icon: Users },
-  { name: 'Time Tracking', href: '/time-tracking', icon: Clock },
-  { name: 'Finance', href: '/finance', icon: DollarSign },
-  { name: 'Inventory', href: '/inventory', icon: Package },
-  { name: 'Documents', href: '/documents', icon: FileText },
-  { name: 'Map', href: '/map', icon: Map },
-  { name: 'Import/Export', href: '/import-export', icon: Upload },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { nameKey: 'navigation.dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { nameKey: 'navigation.projects', href: '/projects', icon: FolderKanban },
+  { nameKey: 'navigation.workforce', href: '/workforce', icon: Users },
+  { nameKey: 'navigation.timeTracking', href: '/time-tracking', icon: Clock },
+  { nameKey: 'navigation.finance', href: '/finance', icon: DollarSign },
+  { nameKey: 'navigation.inventory', href: '/inventory', icon: Package },
+  { nameKey: 'navigation.documents', href: '/documents', icon: FileText },
+  { nameKey: 'navigation.map', href: '/map', icon: Map },
+  { nameKey: 'navigation.importExport', href: '/import-export', icon: Upload },
+  { nameKey: 'navigation.settings', href: '/settings', icon: Settings },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const { isOpen, isCollapsed, close, setCollapsed } = useSidebarStore();
   const { permissions } = useAuthStore();
+  const { t } = useTranslation();
 
   // Filter navigation based on permissions
   const filteredNav = navigationItems.filter((item) => {
@@ -116,7 +118,7 @@ export function Sidebar() {
                 )}
               >
                 <item.icon className={cn('h-5 w-5 flex-shrink-0', isActive && 'text-primary-600 dark:text-primary-400')} />
-                {!isCollapsed && <span>{item.name}</span>}
+                {!isCollapsed && <span>{t(item.nameKey)}</span>}
               </Link>
             );
           })}

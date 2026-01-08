@@ -3,7 +3,10 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useThemeStore, useSidebarStore, useAuthStore } from '@/store';
+import { useTranslation } from '@/hooks';
 import { Avatar, Dropdown, Badge } from '@/components/ui';
+import { LanguageSwitcher } from './language-switcher';
+import { DataSourceSwitcher } from './data-source-switcher';
 import {
   Menu,
   Search,
@@ -21,27 +24,28 @@ export function Header() {
   const { theme, setTheme } = useThemeStore();
   const { toggle } = useSidebarStore();
   const { user, logout } = useAuthStore();
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
 
   const notifications = [
-    { id: 1, title: 'New task assigned', message: 'Steel framework installation', time: '5m ago', unread: true },
-    { id: 2, title: 'Invoice overdue', message: 'INV-2024-003 is past due', time: '1h ago', unread: true },
-    { id: 3, title: 'Stock alert', message: 'Electrical wire running low', time: '2h ago', unread: false },
+    { id: 1, title: t('header.newTaskAssigned'), message: 'Steel framework installation', time: `5 ${t('dashboard.minutesAgo')}`, unread: true },
+    { id: 2, title: t('header.invoiceOverdue'), message: 'INV-2024-003', time: `1 ${t('dashboard.hourAgo')}`, unread: true },
+    { id: 3, title: t('header.stockAlert'), message: 'Electrical wire running low', time: `2 ${t('dashboard.hoursAgo')}`, unread: false },
   ];
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
   const themeOptions = [
-    { label: 'Light', value: 'light', icon: <Sun className="h-4 w-4" /> },
-    { label: 'Dark', value: 'dark', icon: <Moon className="h-4 w-4" /> },
-    { label: 'System', value: 'system', icon: <Monitor className="h-4 w-4" /> },
+    { label: t('header.theme.light'), value: 'light', icon: <Sun className="h-4 w-4" /> },
+    { label: t('header.theme.dark'), value: 'dark', icon: <Moon className="h-4 w-4" /> },
+    { label: t('header.theme.system'), value: 'system', icon: <Monitor className="h-4 w-4" /> },
   ];
 
   const userMenuItems = [
-    { label: 'Profile', value: 'profile', icon: <User className="h-4 w-4" /> },
-    { label: 'Settings', value: 'settings', icon: <Settings className="h-4 w-4" /> },
-    { label: 'Sign out', value: 'logout', icon: <LogOut className="h-4 w-4" />, danger: true },
+    { label: t('navigation.profile'), value: 'profile', icon: <User className="h-4 w-4" /> },
+    { label: t('navigation.settings'), value: 'settings', icon: <Settings className="h-4 w-4" /> },
+    { label: t('auth.logout'), value: 'logout', icon: <LogOut className="h-4 w-4" />, danger: true },
   ];
 
   const handleUserMenuSelect = (value: string) => {
@@ -68,7 +72,7 @@ export function Header() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
             <input
               type="text"
-              placeholder="Search..."
+              placeholder={t('header.search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={cn(
@@ -84,6 +88,12 @@ export function Header() {
 
       {/* Right side */}
       <div className="flex items-center gap-2">
+        {/* Data Source Switcher */}
+        <DataSourceSwitcher />
+
+        {/* Language Switcher */}
+        <LanguageSwitcher />
+
         {/* Theme toggle */}
         <Dropdown
           trigger={
@@ -123,7 +133,7 @@ export function Header() {
               />
               <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-surface-800 rounded-xl shadow-lg border border-surface-200 dark:border-surface-700 z-50 overflow-hidden">
                 <div className="p-4 border-b border-surface-200 dark:border-surface-700">
-                  <h3 className="font-semibold text-surface-900 dark:text-white">Notifications</h3>
+                  <h3 className="font-semibold text-surface-900 dark:text-white">{t('header.notifications')}</h3>
                 </div>
                 <div className="max-h-80 overflow-y-auto">
                   {notifications.map((notification) => (
@@ -148,7 +158,7 @@ export function Header() {
                 </div>
                 <div className="p-3 text-center">
                   <button className="text-sm text-primary-600 dark:text-primary-400 hover:underline">
-                    View all notifications
+                    {t('header.viewAllNotifications')}
                   </button>
                 </div>
               </div>
