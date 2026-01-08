@@ -17,16 +17,20 @@ import {
   ChevronLeft,
   HardHat,
   X,
+  Clock,
+  Upload,
 } from 'lucide-react';
 
 const navigationItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Projects', href: '/projects', icon: FolderKanban },
   { name: 'Workforce', href: '/workforce', icon: Users },
+  { name: 'Time Tracking', href: '/time-tracking', icon: Clock },
   { name: 'Finance', href: '/finance', icon: DollarSign },
   { name: 'Inventory', href: '/inventory', icon: Package },
   { name: 'Documents', href: '/documents', icon: FileText },
   { name: 'Map', href: '/map', icon: Map },
+  { name: 'Import/Export', href: '/import-export', icon: Upload },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
