@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 // DASHBOARD HOOKS
 // =====================================================
 
-export const useDashboardStats = () => {
+export const useDashboardStats = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
@@ -45,11 +45,12 @@ export const useDashboardStats = () => {
         monthlyExpenses: expenses.reduce((sum, e) => sum + (e.amount || 0), 0)
       };
     },
+    enabled: options?.enabled ?? true,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
-export const useRecentProjects = () => {
+export const useRecentProjects = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['recent-projects'],
     queryFn: async () => {
@@ -57,17 +58,18 @@ export const useRecentProjects = () => {
       const { data, error } = await supabase
         .from('projects')
         .select('*')
-        .order('updated_at', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(5);
 
       if (error) throw error;
       return data || [];
     },
+    enabled: options?.enabled ?? true,
     staleTime: 5 * 60 * 1000,
   });
 };
 
-export const useRecentTasks = () => {
+export const useRecentTasks = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['recent-tasks'],
     queryFn: async () => {
@@ -84,11 +86,12 @@ export const useRecentTasks = () => {
       if (error) throw error;
       return data || [];
     },
+    enabled: options?.enabled ?? true,
     staleTime: 5 * 60 * 1000,
   });
 };
 
-export const useMonthlyRevenue = () => {
+export const useMonthlyRevenue = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['monthly-revenue'],
     queryFn: async () => {
@@ -113,11 +116,12 @@ export const useMonthlyRevenue = () => {
         revenue: revenue as number
       }));
     },
+    enabled: options?.enabled ?? true,
     staleTime: 10 * 60 * 1000,
   });
 };
 
-export const useProjectStatusDistribution = () => {
+export const useProjectStatusDistribution = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['project-status-distribution'],
     queryFn: async () => {
@@ -138,6 +142,7 @@ export const useProjectStatusDistribution = () => {
         count: count as number
       }));
     },
+    enabled: options?.enabled ?? true,
     staleTime: 10 * 60 * 1000,
   });
 };
@@ -146,7 +151,7 @@ export const useProjectStatusDistribution = () => {
 // PROJECTS HOOKS
 // =====================================================
 
-export const useProjects = (filters?: { status?: string; priority?: string }) => {
+export const useProjects = (filters?: { status?: string; priority?: string }, options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['projects', filters],
     queryFn: async () => {
@@ -276,7 +281,7 @@ export const useUpdateProject = () => {
 // WORKFORCE HOOKS
 // =====================================================
 
-export const useEmployees = (filters?: { status?: string; department?: string }) => {
+export const useEmployees = (filters?: { status?: string; department?: string }, options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['employees', filters],
     queryFn: async () => {
@@ -295,6 +300,7 @@ export const useEmployees = (filters?: { status?: string; department?: string })
       if (error) throw error;
       return data || [];
     },
+    enabled: options?.enabled ?? true,
     staleTime: 5 * 60 * 1000,
   });
 };
@@ -434,7 +440,7 @@ export const useCreateAttendance = () => {
 // FINANCE HOOKS
 // =====================================================
 
-export const useInvoices = (filters?: { status?: string; type?: string }) => {
+export const useInvoices = (filters?: { status?: string; type?: string }, options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['invoices', filters],
     queryFn: async () => {
@@ -458,6 +464,7 @@ export const useInvoices = (filters?: { status?: string; type?: string }) => {
       if (error) throw error;
       return data || [];
     },
+    enabled: options?.enabled ?? true,
     staleTime: 5 * 60 * 1000,
   });
 };
@@ -551,7 +558,7 @@ export const useCreateExpense = () => {
 // INVENTORY HOOKS
 // =====================================================
 
-export const useInventory = (filters?: { category?: string; stock_status?: string }) => {
+export const useInventory = (filters?: { category?: string; stock_status?: string }, options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['inventory', filters],
     queryFn: async () => {
@@ -570,6 +577,7 @@ export const useInventory = (filters?: { category?: string; stock_status?: strin
       if (error) throw error;
       return data || [];
     },
+    enabled: options?.enabled ?? true,
     staleTime: 5 * 60 * 1000,
   });
 };

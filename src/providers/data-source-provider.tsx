@@ -44,7 +44,7 @@ export const useDataSource = () => {
 
 // Generic hook that switches between Supabase and demo data
 export const useDataWithFallback = <T,>(
-  supabaseHook: () => any,
+  supabaseHook: (options?: { enabled?: boolean }) => any,
   demoData: T,
   options?: {
     enabled?: boolean;
@@ -53,8 +53,13 @@ export const useDataWithFallback = <T,>(
 ) => {
   const { dataSource, isSupabaseAvailable } = useDataSource();
 
+  const shouldUseSupabase = dataSource === 'supabase' && isSupabaseAvailable;
+
+  // Always call the Supabase hook, but disable it when not using Supabase
+  const supabaseResult = supabaseHook({ enabled: shouldUseSupabase });
+
   // If using demo data or Supabase is not available, return demo data
-  if (dataSource === 'demo' || !isSupabaseAvailable) {
+  if (!shouldUseSupabase) {
     return {
       data: demoData,
       isLoading: false,
@@ -62,9 +67,6 @@ export const useDataWithFallback = <T,>(
       isDemoData: true,
     };
   }
-
-  // Use Supabase hook
-  const supabaseResult = supabaseHook();
 
   // If there's an error and fallback is enabled, use demo data
   if (supabaseResult.error && options?.fallbackOnError) {

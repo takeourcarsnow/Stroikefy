@@ -8,7 +8,7 @@ import * as demoData from '@/data';
 
 export const useDashboardStats = () => {
   return useDataWithFallback(
-    supabaseHooks.useDashboardStats,
+    (options) => supabaseHooks.useDashboardStats(options),
     demoData.dashboardStats,
     { fallbackOnError: true }
   );
@@ -16,7 +16,7 @@ export const useDashboardStats = () => {
 
 export const useRecentProjects = () => {
   return useDataWithFallback(
-    supabaseHooks.useRecentProjects,
+    (options) => supabaseHooks.useRecentProjects(options),
     demoData.recentProjects,
     { fallbackOnError: true }
   );
@@ -24,7 +24,7 @@ export const useRecentProjects = () => {
 
 export const useRecentTasks = () => {
   return useDataWithFallback(
-    supabaseHooks.useRecentTasks,
+    (options) => supabaseHooks.useRecentTasks(options),
     demoData.recentTasks,
     { fallbackOnError: true }
   );
@@ -32,7 +32,7 @@ export const useRecentTasks = () => {
 
 export const useMonthlyRevenue = () => {
   return useDataWithFallback(
-    supabaseHooks.useMonthlyRevenue,
+    (options) => supabaseHooks.useMonthlyRevenue(options),
     demoData.monthlyRevenue,
     { fallbackOnError: true }
   );
@@ -40,7 +40,7 @@ export const useMonthlyRevenue = () => {
 
 export const useProjectStatusDistribution = () => {
   return useDataWithFallback(
-    supabaseHooks.useProjectStatusDistribution,
+    (options) => supabaseHooks.useProjectStatusDistribution(options),
     demoData.projectStatusDistribution,
     { fallbackOnError: true }
   );
@@ -91,7 +91,7 @@ export const useUpdateProject = () => supabaseHooks.useUpdateProject();
 
 export const useEmployees = (filters?: { status?: string; department?: string }) => {
   return useDataWithFallback(
-    () => supabaseHooks.useEmployees(filters),
+    (options) => supabaseHooks.useEmployees(filters, options),
     filters ? demoData.getEmployees(filters) : demoData.employees,
     { fallbackOnError: true }
   );
@@ -138,7 +138,7 @@ export const useCreateAttendance = () => supabaseHooks.useCreateAttendance();
 
 export const useInvoices = (filters?: { status?: string; type?: string }) => {
   return useDataWithFallback(
-    () => supabaseHooks.useInvoices(filters),
+    (options) => supabaseHooks.useInvoices(filters, options),
     filters ? demoData.getInvoices(filters) : demoData.invoices,
     { fallbackOnError: true }
   );
@@ -169,7 +169,7 @@ export const useCreateExpense = () => supabaseHooks.useCreateExpense();
 
 export const useInventory = (filters?: { category?: string; stock_status?: string }) => {
   return useDataWithFallback(
-    () => supabaseHooks.useInventory(filters),
+    (options) => supabaseHooks.useInventory(filters, options),
     filters ? demoData.getInventory(filters) : demoData.inventory,
     { fallbackOnError: true }
   );
