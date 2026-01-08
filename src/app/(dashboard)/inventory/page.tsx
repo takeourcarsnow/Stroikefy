@@ -24,8 +24,10 @@ import {
   History,
   DollarSign,
 } from 'lucide-react';
+import { useTranslation } from '@/hooks';
 
 export default function InventoryPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('inventory');
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -202,18 +204,18 @@ export default function InventoryPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Inventory</h1>
-          <p className="text-surface-500">Manage stock and orders</p>
+          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">{t('inventory.title')}</h1>
+          <p className="text-surface-500">{t('inventory.subtitle')}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" leftIcon={<Upload className="h-4 w-4" />}>
-            Import
+            {t('common.import')}
           </Button>
           <Button variant="outline" leftIcon={<Download className="h-4 w-4" />}>
-            Export
+            {t('common.export')}
           </Button>
           <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setShowAddItemModal(true)}>
-            Add Item
+            {t('inventory.newItem')}
           </Button>
         </div>
       </div>
@@ -226,7 +228,7 @@ export default function InventoryPage() {
               <Package className="h-6 w-6 text-primary-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">Total Items</p>
+              <p className="text-sm text-surface-500">{t('inventory.totalItems')}</p>
               <p className="text-xl font-bold text-surface-900 dark:text-white">{totalItems}</p>
             </div>
           </div>
@@ -237,7 +239,7 @@ export default function InventoryPage() {
               <DollarSign className="h-6 w-6 text-green-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">Total Value</p>
+              <p className="text-sm text-surface-500">{t('inventory.totalValue')}</p>
               <p className="text-xl font-bold text-surface-900 dark:text-white">{formatCurrency(totalValue)}</p>
             </div>
           </div>
@@ -248,7 +250,7 @@ export default function InventoryPage() {
               <AlertTriangle className="h-6 w-6 text-red-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">Low Stock</p>
+              <p className="text-sm text-surface-500">{t('inventory.lowStock')}</p>
               <p className="text-xl font-bold text-surface-900 dark:text-white">{lowStockCount}</p>
             </div>
           </div>
@@ -259,7 +261,7 @@ export default function InventoryPage() {
               <Truck className="h-6 w-6 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">Pending Orders</p>
+              <p className="text-sm text-surface-500">{t('inventory.pendingOrders')}</p>
               <p className="text-xl font-bold text-surface-900 dark:text-white">{pendingOrders}</p>
             </div>
           </div>
@@ -276,7 +278,7 @@ export default function InventoryPage() {
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
                 <Input
-                  placeholder="Search inventory..."
+                  placeholder={t('inventory.searchInventory')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   leftIcon={<Search className="h-4 w-4" />}

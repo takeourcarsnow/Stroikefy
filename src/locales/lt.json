@@ -50,7 +50,10 @@
     "address": "Adresas",
     "city": "Miestas",
     "phone": "Telefonas",
-    "email": "El. paštas"
+    "email": "El. paštas",
+    "firstName": "Vardas",
+    "lastName": "Pavardė",
+    "view": "Peržiūra"
   },
   "auth": {
     "login": "Prisijungti",
@@ -210,7 +213,54 @@
       "safety": "Sauga",
       "management": "Vadyba",
       "finance": "Finansai"
-    }
+    },
+    "employeeDetail": {
+      "loading": "Kraunamos darbuotojo detalės...",
+      "notFound": "Darbuotojas nerastas",
+      "backToWorkforce": "Atgal į darbuotojus",
+      "hoursThisWeek": "Valandos šią savaitę",
+      "overtime": "Viršvalandžiai",
+      "earningsWeek": "Pajamos (savaitė)",
+      "noTimeEntries": "Dar nėra laiko įrašų",
+      "hourlyRate": "Valandinis tarifas",
+      "timeEntries": "Laiko įrašai",
+      "dueDate": "Terminas",
+      "noDocuments": "Dar nėra dokumentų",
+      "uploadDocumentsDesc": "Čia įkelkite darbuotojo dokumentus",
+      "uploadDocument": "Įkelti dokumentą",
+      "hired": "Įdarbintas"    },
+    "stats": {
+      "totalEmployees": "Visi darbuotojai",
+      "active": "Aktyvūs",
+      "onLeave": "Atostogose",
+      "hoursThisWeek": "Valandos šią savaitę"
+    },
+    "searchPlaceholder": "Ieškoti darbuotojų...",
+    "table": {
+      "employee": "Darbuotojas",
+      "position": "Pareigos",
+      "status": "Būsena",
+      "phone": "Telefonas",
+      "rate": "Tarifas",
+      "hireDate": "Įdarbinimo data",
+      "viewProfile": "Peržiūrėti profilį"
+    },
+    "addEmployee": {
+      "title": "Pridėti naują darbuotoją",
+      "firstName": "Vardas",
+      "lastName": "Pavardė",
+      "email": "El. paštas",
+      "phone": "Telefonas",
+      "position": "Pareigos",
+      "department": "Skyrius",
+      "hourlyRate": "Valandinis tarifas",
+      "hireDate": "Įdarbinimo data",
+      "address": "Adresas",
+      "submit": "Pridėti darbuotoją"
+    },
+    "noEmployees": {
+      "title": "Darbuotojų nerasta",
+      "description": "Pabandykite pakeisti paiešką arba filtrus"    }
   },
   "timeTracking": {
     "title": "Darbo laikas",
@@ -241,7 +291,8 @@
     },
     "thisWeek": "Ši savaitė",
     "lastWeek": "Praėjusi savaitė",
-    "thisMonth": "Šis mėnuo"
+    "thisMonth": "Šis mėnuo",
+    "saveEntry": "Išsaugoti įrašą"
   },
   "finance": {
     "title": "Finansai",
@@ -302,9 +353,17 @@
     "maxStock": "Maks. atsargos",
     "unitPrice": "Vieneto kaina",
     "totalValue": "Bendra vertė",
+    "totalItems": "Visi elementai",
+    "lowStock": "Mažos atsargos",
+    "pendingOrders": "Laukiami užsakymai",
     "warehouse": "Sandėlis",
     "supplier": "Tiekėjas",
     "lastRestocked": "Paskutinis papildymas",
+    "searchInventory": "Ieškoti inventoriaus...",
+    "noItems": {
+      "title": "Prekių nerasta",
+      "description": "Pabandykite pakeisti paiešką arba pridėti naują prekę"
+    },
     "stockStatus": {
       "in-stock": "Yra sandėlyje",
       "low-stock": "Mažos atsargos",
@@ -335,9 +394,12 @@
       "adjustment": "Koregavimas"
     }
   },
+
   "documents": {
     "title": "Dokumentai",
     "subtitle": "Valdykite sutartis, leidimus, brėžinius ir failus",
+    "downloadAll": "Atsisiųsti viską",
+    "upload": "Įkelti",
     "uploadDocument": "Įkelti dokumentą",
     "newFolder": "Naujas aplankas",
     "folders": "Aplankai",
@@ -347,8 +409,11 @@
     "fileSize": "Failo dydis",
     "uploadedBy": "Įkėlė",
     "uploadDate": "Įkėlimo data",
-    "version": "Versija",
-    "tags": "Žymės",
+    "totalFiles": "Visi failai",
+    "totalSize": "Bendras dydis",
+    "recent": "Naujausi",
+    "searchDocuments": "Ieškoti dokumentų...",
+    "noDocumentsFound": "Dokumentų nerasta",
     "documentType": {
       "contract": "Sutartis",
       "permit": "Leidimas",
@@ -374,9 +439,21 @@
     "subtitle": "Importuokite ir eksportuokite duomenis įvairiais formatais",
     "importData": "Importuoti duomenis",
     "exportData": "Eksportuoti duomenis",
+    "selectDataType": "Pasirinkite duomenų tipą",
     "selectFile": "Pasirinkite failą importavimui",
+    "uploadFile": "Įkelti failą",
     "dragAndDrop": "Nutempkite failus čia arba spauskite naršyti",
     "supportedFormats": "Palaikomi formatai: CSV, XLSX, JSON",
+    "downloadTemplate": "Atsisiųsti šabloną",
+    "processImport": "Apdoroti importą",
+    "importResults": "Importo rezultatai",
+    "successful": "Sėkmingai",
+    "failed": "Nepavyko",
+    "totalRows": "Iš viso eilučių",
+    "importErrors": "Importo klaidos",
+    "previewData": "Peržiūrėti duomenis",
+    "confirmImport": "Patvirtinti importą",
+    "startOver": "Pradėti iš naujo",
     "exportFormat": "Eksporto formatas",
     "exportType": "Duomenų tipas",
     "excel": "Excel (.xlsx)",
@@ -386,10 +463,37 @@
   "settings": {
     "title": "Nustatymai",
     "subtitle": "Tvarkykite savo paskyrą ir programos nustatymus",
+    "tabs": {
+      "profile": "Profilis",
+      "company": "Įmonė",
+      "notifications": "Pranešimai",
+      "appearance": "Išvaizda",
+      "security": "Sauga",
+      "billing": "Apmokėjimai",
+      "team": "Komanda",
+      "data": "Duomenys"
+    },
+    "profile": {
+      "title": "Profilio informacija",
+      "description": "Atnaujinkite savo asmeninius duomenis",
+      "changePhoto": "Keisti nuotrauką",
+      "jobTitle": "Pareigos",
+      "bioPlaceholder": "Papasakokite apie save..."
+    },
+    "company": {
+      "title": "Įmonės informacija",
+      "description": "Tvarkykite savo organizacijos duomenis"
+    },
+    "data": {
+      "exportData": "Eksportuoti duomenis",
+      "importData": "Importuoti duomenis",
+      "downloadTemplate": "Atsisiųsti šabloną",
+      "browseFiles": "Naršyti failus"
+    },
     "general": "Bendrieji",
     "appearance": "Išvaizda",
     "notifications": "Pranešimai",
-    "security": "Saugumas",
+    "security": "Sauga",
     "language": "Kalba",
     "timezone": "Laiko juosta",
     "dateFormat": "Datos formatas",

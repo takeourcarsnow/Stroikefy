@@ -31,6 +31,7 @@ import {
   ChevronRight,
   Home,
 } from 'lucide-react';
+import { useTranslation } from '@/hooks';
 
 const getFileIcon = (type: DocumentType) => {
   switch (type) {
@@ -83,6 +84,7 @@ const getFileIconSmall = (type: DocumentType) => {
 };
 
 export default function DocumentsPage() {
+  const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
@@ -147,15 +149,15 @@ export default function DocumentsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Documents</h1>
-          <p className="text-surface-500">Manage files and documents</p>
+          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">{t('documents.title')}</h1>
+          <p className="text-surface-500">{t('documents.subtitle')}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" leftIcon={<Download className="h-4 w-4" />}>
-            Download All
+            {t('documents.downloadAll')}
           </Button>
           <Button leftIcon={<Upload className="h-4 w-4" />} onClick={() => setShowUploadModal(true)}>
-            Upload
+            {t('documents.upload')}
           </Button>
         </div>
       </div>
@@ -168,7 +170,7 @@ export default function DocumentsPage() {
               <FileText className="h-6 w-6 text-primary-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">Total Files</p>
+              <p className="text-sm text-surface-500">{t('documents.totalFiles')}</p>
               <p className="text-xl font-bold text-surface-900 dark:text-white">{totalDocs}</p>
             </div>
           </div>
@@ -179,7 +181,7 @@ export default function DocumentsPage() {
               <Folder className="h-6 w-6 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">Folders</p>
+              <p className="text-sm text-surface-500">{t('documents.folders')}</p>
               <p className="text-xl font-bold text-surface-900 dark:text-white">{folders.length}</p>
             </div>
           </div>
@@ -190,7 +192,7 @@ export default function DocumentsPage() {
               <Download className="h-6 w-6 text-green-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">Total Size</p>
+              <p className="text-sm text-surface-500">{t('documents.totalSize')}</p>
               <p className="text-xl font-bold text-surface-900 dark:text-white">{formatFileSize(totalSize)}</p>
             </div>
           </div>
@@ -201,7 +203,7 @@ export default function DocumentsPage() {
               <Clock className="h-6 w-6 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">Recent</p>
+              <p className="text-sm text-surface-500">{t('documents.recent')}</p>
               <p className="text-xl font-bold text-surface-900 dark:text-white">{recentDocs.length}</p>
             </div>
           </div>
@@ -237,7 +239,7 @@ export default function DocumentsPage() {
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <Input
-              placeholder="Search documents..."
+              placeholder={t('documents.searchDocuments')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               leftIcon={<Search className="h-4 w-4" />}

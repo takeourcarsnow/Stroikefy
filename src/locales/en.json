@@ -50,7 +50,10 @@
     "address": "Address",
     "city": "City",
     "phone": "Phone",
-    "email": "Email"
+    "email": "Email",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "view": "View"
   },
   "auth": {
     "login": "Log In",
@@ -210,6 +213,55 @@
       "safety": "Safety",
       "management": "Management",
       "finance": "Finance"
+    },
+    "employeeDetail": {
+      "loading": "Loading employee details...",
+      "notFound": "Employee not found",
+      "backToWorkforce": "Back to workforce",
+      "hoursThisWeek": "Hours This Week",
+      "overtime": "Overtime",
+      "earningsWeek": "Earnings (Week)",
+      "noTimeEntries": "No time entries yet",
+      "hourlyRate": "Hourly Rate",
+      "timeEntries": "Time Entries",
+      "dueDate": "Due Date",
+      "noDocuments": "No documents yet",
+      "uploadDocumentsDesc": "Upload employee documents here",
+      "uploadDocument": "Upload Document",
+      "hired": "Hired"
+    },
+    "stats": {
+      "totalEmployees": "Total Employees",
+      "active": "Active",
+      "onLeave": "On Leave",
+      "hoursThisWeek": "Hours This Week"
+    },
+    "searchPlaceholder": "Search employees...",
+    "table": {
+      "employee": "Employee",
+      "position": "Position",
+      "status": "Status",
+      "phone": "Phone",
+      "rate": "Rate",
+      "hireDate": "Hire Date",
+      "viewProfile": "View Profile"
+    },
+    "addEmployee": {
+      "title": "Add New Employee",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "position": "Position",
+      "department": "Department",
+      "hourlyRate": "Hourly Rate",
+      "hireDate": "Hire Date",
+      "address": "Address",
+      "submit": "Add Employee"
+    },
+    "noEmployees": {
+      "title": "No employees found",
+      "description": "Try adjusting your search or filters"
     }
   },
   "timeTracking": {
@@ -241,7 +293,8 @@
     },
     "thisWeek": "This Week",
     "lastWeek": "Last Week",
-    "thisMonth": "This Month"
+    "thisMonth": "This Month",
+    "saveEntry": "Save Entry"
   },
   "finance": {
     "title": "Finance",
@@ -302,9 +355,17 @@
     "maxStock": "Max Stock",
     "unitPrice": "Unit Price",
     "totalValue": "Total Value",
+    "totalItems": "Total Items",
+    "lowStock": "Low Stock",
+    "pendingOrders": "Pending Orders",
     "warehouse": "Warehouse",
     "supplier": "Supplier",
     "lastRestocked": "Last Restocked",
+    "searchInventory": "Search inventory...",
+    "noItems": {
+      "title": "No items found",
+      "description": "Try adjusting your search or add new inventory items"
+    },
     "stockStatus": {
       "in-stock": "In Stock",
       "low-stock": "Low Stock",
@@ -338,6 +399,8 @@
   "documents": {
     "title": "Documents",
     "subtitle": "Manage contracts, permits, blueprints, and files",
+    "downloadAll": "Download All",
+    "upload": "Upload",
     "uploadDocument": "Upload Document",
     "newFolder": "New Folder",
     "folders": "Folders",
@@ -347,8 +410,11 @@
     "fileSize": "File Size",
     "uploadedBy": "Uploaded By",
     "uploadDate": "Upload Date",
-    "version": "Version",
-    "tags": "Tags",
+    "totalFiles": "Total Files",
+    "totalSize": "Total Size",
+    "recent": "Recent",
+    "searchDocuments": "Search documents...",
+    "noDocumentsFound": "No documents found",
     "documentType": {
       "contract": "Contract",
       "permit": "Permit",
@@ -374,9 +440,21 @@
     "subtitle": "Import and export data in various formats",
     "importData": "Import Data",
     "exportData": "Export Data",
+    "selectDataType": "Select Data Type",
     "selectFile": "Select a file to import",
+    "uploadFile": "Upload File",
     "dragAndDrop": "Drag and drop files here or click to browse",
     "supportedFormats": "Supported formats: CSV, XLSX, JSON",
+    "downloadTemplate": "Download Template",
+    "processImport": "Process Import",
+    "importResults": "Import Results",
+    "successful": "Successful",
+    "failed": "Failed",
+    "totalRows": "Total Rows",
+    "importErrors": "Import Errors",
+    "previewData": "Preview Data",
+    "confirmImport": "Confirm Import",
+    "startOver": "Start Over",
     "exportFormat": "Export Format",
     "exportType": "Data Type",
     "excel": "Excel (.xlsx)",
@@ -386,6 +464,33 @@
   "settings": {
     "title": "Settings",
     "subtitle": "Manage your account and application settings",
+    "tabs": {
+      "profile": "Profile",
+      "company": "Company",
+      "notifications": "Notifications",
+      "appearance": "Appearance",
+      "security": "Security",
+      "billing": "Billing",
+      "team": "Team",
+      "data": "Data"
+    },
+    "profile": {
+      "title": "Profile Information",
+      "description": "Update your personal details",
+      "changePhoto": "Change Photo",
+      "jobTitle": "Job Title",
+      "bioPlaceholder": "Tell us about yourself..."
+    },
+    "company": {
+      "title": "Company Information",
+      "description": "Manage your organization details"
+    },
+    "data": {
+      "exportData": "Export Data",
+      "importData": "Import Data",
+      "downloadTemplate": "Download Template",
+      "browseFiles": "Browse Files"
+    },
     "general": "General",
     "appearance": "Appearance",
     "notifications": "Notifications",

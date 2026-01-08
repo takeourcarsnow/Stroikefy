@@ -7,6 +7,7 @@ import { Card, CardHeader, Button, Badge, Input, Select, Avatar, Tabs, Progress,
 import { cn, formatDate, formatCurrency, formatRelativeTime } from '@/lib/utils';
 import { useEmployees, useTimeEntries, useProjects } from '@/hooks/data-hooks';
 import { EMPLOYEE_STATUS_COLORS, TimeEntry, PROJECT_STATUS_COLORS, Employee, Project } from '@/types';
+import { useTranslation } from '@/hooks/useTranslation';
 import {
   ArrowLeft,
   Edit,
@@ -27,6 +28,7 @@ import {
 export default function EmployeeDetailPage() {
   const params = useParams();
   const employeeId = params.id as string;
+  const { t } = useTranslation();
 
   const { data: employees = [], isLoading: employeesLoading } = useEmployees();
   const { data: timeEntriesData = [], isLoading: timeEntriesLoading } = useTimeEntries();
@@ -45,7 +47,7 @@ export default function EmployeeDetailPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-surface-500">Loading employee details...</p>
+          <p className="text-surface-500">{t('workforce.employeeDetail.loading')}</p>
         </div>
       </div>
     );
@@ -54,9 +56,9 @@ export default function EmployeeDetailPage() {
   if (!employee) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-surface-900 dark:text-white">Employee not found</h2>
+        <h2 className="text-2xl font-bold text-surface-900 dark:text-white">{t('workforce.employeeDetail.notFound')}</h2>
         <Link href="/workforce" className="text-primary-600 hover:underline mt-4 inline-block">
-          Back to workforce
+          {t('workforce.employeeDetail.backToWorkforce')}
         </Link>
       </div>
     );
@@ -159,13 +161,13 @@ export default function EmployeeDetailPage() {
                 </div>
                 <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
                   <Calendar className="h-4 w-4" />
-                  <span>Hired {formatDate(employee.hireDate)}</span>
+                  <span>{t('workforce.employeeDetail.hired')} {formatDate(employee.hireDate)}</span>
                 </div>
               </div>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" leftIcon={<Edit className="h-4 w-4" />}>
-                Edit
+                {t('common.edit')}
               </Button>
               <Button leftIcon={<Clock className="h-4 w-4" />} onClick={() => setShowLogTimeModal(true)}>
                 Log Time
@@ -182,28 +184,28 @@ export default function EmployeeDetailPage() {
             <Clock className="h-5 w-5 text-blue-600" />
           </div>
           <h3 className="text-2xl font-bold text-surface-900 dark:text-white">{totalHoursWorked.toFixed(1)}h</h3>
-          <p className="text-sm text-surface-500">Hours This Week</p>
+          <p className="text-sm text-surface-500">{t('workforce.employeeDetail.hoursThisWeek')}</p>
         </Card>
         <Card className="text-center">
           <div className="flex items-center justify-center w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 mx-auto mb-2">
             <AlertCircle className="h-5 w-5 text-orange-600" />
           </div>
           <h3 className="text-2xl font-bold text-surface-900 dark:text-white">{totalOvertimeHours.toFixed(1)}h</h3>
-          <p className="text-sm text-surface-500">Overtime</p>
+          <p className="text-sm text-surface-500">{t('workforce.employeeDetail.overtime')}</p>
         </Card>
         <Card className="text-center">
           <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 mx-auto mb-2">
             <DollarSign className="h-5 w-5 text-green-600" />
           </div>
           <h3 className="text-2xl font-bold text-surface-900 dark:text-white">{formatCurrency(totalEarnings)}</h3>
-          <p className="text-sm text-surface-500">Earnings (Week)</p>
+          <p className="text-sm text-surface-500">{t('workforce.employeeDetail.earningsWeek')}</p>
         </Card>
         <Card className="text-center">
           <div className="flex items-center justify-center w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 mx-auto mb-2">
             <Briefcase className="h-5 w-5 text-purple-600" />
           </div>
           <h3 className="text-2xl font-bold text-surface-900 dark:text-white">{employeeProjects.length}</h3>
-          <p className="text-sm text-surface-500">Active Projects</p>
+          <p className="text-sm text-surface-500">{t('workforce.activeProjects')}</p>
         </Card>
       </div>
 
@@ -241,7 +243,7 @@ export default function EmployeeDetailPage() {
                   );
                 })}
                 {timeEntries.length === 0 && (
-                  <p className="text-center text-surface-500 py-4">No time entries yet</p>
+                  <p className="text-center text-surface-500 py-4">{t('workforce.employeeDetail.noTimeEntries')}</p>
                 )}
               </div>
             </Card>
@@ -283,21 +285,21 @@ export default function EmployeeDetailPage() {
               <CardHeader title="Details" />
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-surface-500 mb-1">Employee ID</p>
+                  <p className="text-sm text-surface-500 mb-1">{t('workforce.employeeId')}</p>
                   <p className="font-medium text-surface-900 dark:text-white">{employee.id}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 mb-1">Hourly Rate</p>
+                  <p className="text-sm text-surface-500 mb-1">{t('workforce.employeeDetail.hourlyRate')}</p>
                   <p className="font-medium text-surface-900 dark:text-white">{formatCurrency(hourlyRate)}/hr</p>
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 mb-1">Emergency Contact</p>
+                  <p className="text-sm text-surface-500 mb-1">{t('workforce.emergencyContact')}</p>
                   <p className="font-medium text-surface-900 dark:text-white">{employee.emergencyContact?.name || 'Not set'}</p>
                   <p className="text-sm text-surface-500">{employee.emergencyContact?.phone || ''}</p>
                 </div>
                 {employee.certifications && employee.certifications.length > 0 && (
                   <div>
-                    <p className="text-sm text-surface-500 mb-2">Certifications</p>
+                    <p className="text-sm text-surface-500 mb-2">{t('workforce.certifications')}</p>
                     <div className="flex flex-wrap gap-2">
                       {employee.certifications.map((cert: string, index: number) => (
                         <Badge key={index} variant="default">{cert}</Badge>
@@ -307,7 +309,7 @@ export default function EmployeeDetailPage() {
                 )}
                 {employee.skills && employee.skills.length > 0 && (
                   <div>
-                    <p className="text-sm text-surface-500 mb-2">Skills</p>
+                    <p className="text-sm text-surface-500 mb-2">{t('workforce.skills')}</p>
                     <div className="flex flex-wrap gap-2">
                       {employee.skills.map((skill: string, index: number) => (
                         <Badge key={index} variant="default">{skill}</Badge>
@@ -342,7 +344,7 @@ export default function EmployeeDetailPage() {
       {activeTab === 'time-tracking' && (
         <div className="space-y-6">
           <div className="flex justify-between">
-            <h2 className="text-lg font-semibold text-surface-900 dark:text-white">Time Entries</h2>
+            <h2 className="text-lg font-semibold text-surface-900 dark:text-white">{t('workforce.employeeDetail.timeEntries')}</h2>
             <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setShowLogTimeModal(true)}>
               Log Time
             </Button>
@@ -373,12 +375,12 @@ export default function EmployeeDetailPage() {
               </div>
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-surface-500">Progress</span>
+                  <span className="text-surface-500">{t('workforce.progress')}</span>
                   <span className="font-medium text-surface-900 dark:text-white">{project.progress}%</span>
                 </div>
                 <Progress value={project.progress} />
                 <div className="flex justify-between text-sm">
-                  <span className="text-surface-500">Due Date</span>
+                  <span className="text-surface-500">{t('workforce.employeeDetail.dueDate')}</span>
                   <span className="text-surface-900 dark:text-white">{formatDate(project.endDate)}</span>
                 </div>
               </div>
@@ -390,9 +392,9 @@ export default function EmployeeDetailPage() {
       {activeTab === 'documents' && (
         <Card className="text-center py-12">
           <FileText className="h-12 w-12 text-surface-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-2">No documents yet</h3>
-          <p className="text-surface-500 mb-4">Upload employee documents here</p>
-          <Button leftIcon={<Plus className="h-4 w-4" />}>Upload Document</Button>
+          <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-2">{t('workforce.employeeDetail.noDocuments')}</h3>
+          <p className="text-surface-500 mb-4">{t('workforce.employeeDetail.uploadDocumentsDesc')}</p>
+          <Button leftIcon={<Plus className="h-4 w-4" />}>{t('workforce.employeeDetail.uploadDocument')}</Button>
         </Card>
       )}
 
@@ -418,8 +420,8 @@ export default function EmployeeDetailPage() {
           <Input label="Notes" placeholder="Optional notes about work done..." />
         </form>
         <ModalFooter>
-          <Button variant="ghost" onClick={() => setShowLogTimeModal(false)}>Cancel</Button>
-          <Button>Save Entry</Button>
+          <Button variant="ghost" onClick={() => setShowLogTimeModal(false)}>{t('common.cancel')}</Button>
+          <Button>{t('timeTracking.saveEntry')}</Button>
         </ModalFooter>
       </Modal>
     </div>

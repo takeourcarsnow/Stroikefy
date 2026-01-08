@@ -29,21 +29,23 @@ import {
   Trash2,
   AlertTriangle,
 } from 'lucide-react';
+import { useTranslation } from '@/hooks';
 
 export default function SettingsPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('profile');
   const { theme, setTheme } = useThemeStore();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const tabs = [
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'company', label: 'Company', icon: Building },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'appearance', label: 'Appearance', icon: Palette },
-    { id: 'security', label: 'Security', icon: Shield },
-    { id: 'billing', label: 'Billing', icon: CreditCard },
-    { id: 'team', label: 'Team', icon: Users },
-    { id: 'data', label: 'Data', icon: Database },
+    { id: 'profile', label: t('settings.tabs.profile'), icon: User },
+    { id: 'company', label: t('settings.tabs.company'), icon: Building },
+    { id: 'notifications', label: t('settings.tabs.notifications'), icon: Bell },
+    { id: 'appearance', label: t('settings.tabs.appearance'), icon: Palette },
+    { id: 'security', label: t('settings.tabs.security'), icon: Shield },
+    { id: 'billing', label: t('settings.tabs.billing'), icon: CreditCard },
+    { id: 'team', label: t('settings.tabs.team'), icon: Users },
+    { id: 'data', label: t('settings.tabs.data'), icon: Database },
   ];
 
   const themeOptions = [
@@ -56,8 +58,8 @@ export default function SettingsPage() {
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Settings</h1>
-        <p className="text-surface-500">Manage your account and preferences</p>
+        <h1 className="text-2xl font-bold text-surface-900 dark:text-white">{t('settings.title')}</h1>
+        <p className="text-surface-500">{t('settings.subtitle')}</p>
       </div>
 
       {/* Tabs */}
@@ -92,23 +94,23 @@ export default function SettingsPage() {
           {activeTab === 'profile' && (
             <>
               <Card>
-                <CardHeader title="Profile Information" description="Update your personal details" />
+                <CardHeader title={t('settings.profile.title')} description={t('settings.profile.description')} />
                 <div className="flex flex-col sm:flex-row gap-6 mb-6">
                   <div className="flex flex-col items-center gap-3">
                     <Avatar name="John Doe" size="xl" />
-                    <Button variant="outline" size="sm">Change Photo</Button>
+                    <Button variant="outline" size="sm">{t('settings.profile.changePhoto')}</Button>
                   </div>
                   <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Input label="First Name" defaultValue="John" />
-                    <Input label="Last Name" defaultValue="Doe" />
-                    <Input label="Email" type="email" defaultValue="john@example.com" />
-                    <Input label="Phone" type="tel" defaultValue="+1 234 567 890" />
+                    <Input label={t('common.firstName') ?? 'First Name'} defaultValue="John" />
+                    <Input label={t('common.lastName') ?? 'Last Name'} defaultValue="Doe" />
+                    <Input label={t('common.email') ?? 'Email'} type="email" defaultValue="john@example.com" />
+                    <Input label={t('common.phone') ?? 'Phone'} type="tel" defaultValue="+1 234 567 890" />
                   </div>
                 </div>
-                <Input label="Job Title" defaultValue="Project Manager" className="mb-4" />
-                <Textarea label="Bio" placeholder="Tell us about yourself..." className="mb-4" />
+                <Input label={t('settings.profile.jobTitle')} defaultValue="Project Manager" className="mb-4" />
+                <Textarea label={t('settings.profile.bioPlaceholder')} placeholder={t('settings.profile.bioPlaceholder')} className="mb-4" />
                 <div className="flex justify-end">
-                  <Button>Save Changes</Button>
+                  <Button>{t('common.save')}</Button>
                 </div>
               </Card>
             </>

@@ -21,6 +21,7 @@ import {
   Package,
   ClipboardList,
 } from 'lucide-react';
+import { useTranslation } from '@/hooks';
 
 type ImportType = 'employees' | 'inventory' | 'tasks';
 
@@ -32,6 +33,7 @@ interface ImportResult {
 }
 
 export default function ImportExportPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'import' | 'export'>('import');
   const [importType, setImportType] = useState<ImportType>('employees');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -138,8 +140,8 @@ export default function ImportExportPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Import & Export</h1>
-          <p className="text-surface-500">Import data from Excel or export your data</p>
+          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">{t('importExport.title')}</h1>
+          <p className="text-surface-500">{t('importExport.subtitle')}</p>
         </div>
       </div>
 
@@ -155,7 +157,7 @@ export default function ImportExportPage() {
           )}
         >
           <Upload className="h-4 w-4 inline mr-2" />
-          Import
+          {t('common.import')}
         </button>
         <button
           onClick={() => setActiveTab('export')}
@@ -167,7 +169,7 @@ export default function ImportExportPage() {
           )}
         >
           <Download className="h-4 w-4 inline mr-2" />
-          Export
+          {t('common.export')}
         </button>
       </div>
 
@@ -177,7 +179,7 @@ export default function ImportExportPage() {
           {/* Import Type Selection */}
           <div className="lg:col-span-1">
             <Card>
-              <CardHeader title="Select Data Type" description="Choose what you want to import" />
+              <CardHeader title={t('importExport.selectDataType')} description={t('importExport.selectDataType')} />
               <div className="space-y-2">
                 {importTypes.map((type) => {
                   const Icon = type.icon;
@@ -226,7 +228,7 @@ export default function ImportExportPage() {
                   leftIcon={<Download className="h-4 w-4" />}
                   onClick={downloadTemplate}
                 >
-                  Download Template
+                  {t('importExport.downloadTemplate')}
                 </Button>
               </div>
             </Card>
@@ -236,7 +238,7 @@ export default function ImportExportPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* File Upload */}
             <Card>
-              <CardHeader title="Upload File" description="Upload an Excel file (.xlsx, .xls) or CSV" />
+              <CardHeader title={t('importExport.uploadFile')} description={t('importExport.selectFile')} />
               
               {!selectedFile ? (
                 <FileUpload
@@ -274,7 +276,7 @@ export default function ImportExportPage() {
                   >
                     {!isProcessing && (
                       <>
-                        Process Import
+                        {t('importExport.processImport')}
                         <ArrowRight className="h-4 w-4 ml-2" />
                       </>
                     )}
@@ -286,24 +288,24 @@ export default function ImportExportPage() {
             {/* Import Results */}
             {importResult && (
               <Card>
-                <CardHeader title="Import Results" />
+                <CardHeader title={t('importExport.importResults')} />
                 
                 {/* Summary */}
                 <div className="grid grid-cols-3 gap-4 mb-6">
                   <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg text-center">
                     <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
                     <p className="text-2xl font-bold text-green-600">{importResult.success}</p>
-                    <p className="text-sm text-green-700 dark:text-green-400">Successful</p>
+                    <p className="text-sm text-green-700 dark:text-green-400">{t('importExport.successful')}</p>
                   </div>
                   <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg text-center">
                     <XCircle className="h-8 w-8 text-red-600 mx-auto mb-2" />
                     <p className="text-2xl font-bold text-red-600">{importResult.failed}</p>
-                    <p className="text-sm text-red-700 dark:text-red-400">Failed</p>
+                    <p className="text-sm text-red-700 dark:text-red-400">{t('importExport.failed')}</p>
                   </div>
                   <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center">
                     <FileText className="h-8 w-8 text-blue-600 mx-auto mb-2" />
                     <p className="text-2xl font-bold text-blue-600">{importResult.success + importResult.failed}</p>
-                    <p className="text-sm text-blue-700 dark:text-blue-400">Total Rows</p>
+                    <p className="text-sm text-blue-700 dark:text-blue-400">{t('importExport.totalRows')}</p>
                   </div>
                 </div>
 
@@ -329,15 +331,15 @@ export default function ImportExportPage() {
                   {importResult.success > 0 && (
                     <>
                       <Button leftIcon={<Eye className="h-4 w-4" />} onClick={() => setShowPreviewModal(true)}>
-                        Preview Data
+                        {t('importExport.previewData')}
                       </Button>
                       <Button variant="primary">
-                        Confirm Import ({importResult.success} rows)
+                        {t('importExport.confirmImport')} ({importResult.success} rows)
                       </Button>
                     </>
                   )}
                   <Button variant="outline" onClick={resetImport} leftIcon={<RefreshCw className="h-4 w-4" />}>
-                    Start Over
+                    {t('importExport.startOver')}
                   </Button>
                 </div>
               </Card>

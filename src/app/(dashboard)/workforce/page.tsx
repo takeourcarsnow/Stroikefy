@@ -26,8 +26,10 @@ import {
   Briefcase,
   DollarSign,
 } from 'lucide-react';
+import { useTranslation } from '@/hooks';
 
 export default function WorkforcePage() {
+  const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -73,7 +75,7 @@ export default function WorkforcePage() {
   const tableColumns = [
     {
       key: 'name',
-      header: 'Employee',
+      header: t('workforce.table.employee'),
       render: (employee: Employee) => (
         <div className="flex items-center gap-3">
           <Avatar src={employee.avatar} name={employee.name} size="sm" />
@@ -91,7 +93,7 @@ export default function WorkforcePage() {
     },
     {
       key: 'position',
-      header: 'Position',
+      header: t('workforce.table.position'),
       render: (employee: Employee) => (
         <div>
           <p className="text-surface-900 dark:text-white">{employee.position}</p>
@@ -101,7 +103,7 @@ export default function WorkforcePage() {
     },
     {
       key: 'status',
-      header: 'Status',
+      header: t('workforce.table.status'),
       render: (employee: Employee) => (
         <Badge variant="custom" className={EMPLOYEE_STATUS_COLORS[employee.status as keyof typeof EMPLOYEE_STATUS_COLORS]}>
           {employee.status.replace('-', ' ')}
@@ -110,14 +112,14 @@ export default function WorkforcePage() {
     },
     {
       key: 'phone',
-      header: 'Phone',
+      header: t('workforce.table.phone'),
       render: (employee: Employee) => (
         <span className="text-surface-600 dark:text-surface-400">{employee.phone}</span>
       ),
     },
     {
       key: 'hourlyRate',
-      header: 'Rate',
+      header: t('workforce.table.rate'),
       render: (employee: Employee) => {
         const hourlyRate = employee.salary / 2080;
         return (
@@ -129,7 +131,7 @@ export default function WorkforcePage() {
     },
     {
       key: 'hireDate',
-      header: 'Hire Date',
+      header: t('workforce.table.hireDate'),
       render: (employee: Employee) => (
         <span className="text-surface-600 dark:text-surface-400">
           {formatDate(employee.hireDate)}
@@ -144,7 +146,7 @@ export default function WorkforcePage() {
           href={`/workforce/${employee.id}`}
           className="text-primary-600 hover:text-primary-700 text-sm font-medium"
         >
-          View
+          {t('common.view')}
         </Link>
       ),
     },
@@ -160,18 +162,18 @@ export default function WorkforcePage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Workforce</h1>
-          <p className="text-surface-500">Manage employees and track time</p>
+          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">{t('navigation.workforce')}</h1>
+          <p className="text-surface-500">{t('workforce.subtitle')}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" leftIcon={<Upload className="h-4 w-4" />}>
-            Import
+            {t('common.import')}
           </Button>
           <Button variant="outline" leftIcon={<Download className="h-4 w-4" />}>
-            Export
+            {t('common.export')}
           </Button>
           <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setShowAddModal(true)}>
-            Add Employee
+            {t('workforce.newEmployee')}
           </Button>
         </div>
       </div>
@@ -183,28 +185,28 @@ export default function WorkforcePage() {
             <User className="h-6 w-6 text-primary-600" />
           </div>
           <h3 className="text-2xl font-bold text-surface-900 dark:text-white">{employees.length}</h3>
-          <p className="text-sm text-surface-500">Total Employees</p>
+          <p className="text-sm text-surface-500">{t('workforce.stats.totalEmployees')}</p>
         </Card>
         <Card className="text-center">
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 mx-auto mb-3">
             <Briefcase className="h-6 w-6 text-green-600" />
           </div>
           <h3 className="text-2xl font-bold text-surface-900 dark:text-white">{activeCount}</h3>
-          <p className="text-sm text-surface-500">Active</p>
+          <p className="text-sm text-surface-500">{t('workforce.stats.active')}</p>
         </Card>
         <Card className="text-center">
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 mx-auto mb-3">
             <Calendar className="h-6 w-6 text-yellow-600" />
           </div>
           <h3 className="text-2xl font-bold text-surface-900 dark:text-white">{onLeaveCount}</h3>
-          <p className="text-sm text-surface-500">On Leave</p>
+          <p className="text-sm text-surface-500">{t('workforce.stats.onLeave')}</p>
         </Card>
         <Card className="text-center">
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 mx-auto mb-3">
             <Clock className="h-6 w-6 text-blue-600" />
           </div>
           <h3 className="text-2xl font-bold text-surface-900 dark:text-white">{totalHours.toFixed(0)}h</h3>
-          <p className="text-sm text-surface-500">Hours This Week</p>
+          <p className="text-sm text-surface-500">{t('workforce.stats.hoursThisWeek')}</p>
         </Card>
       </div>
 
@@ -213,7 +215,7 @@ export default function WorkforcePage() {
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <Input
-              placeholder="Search employees..."
+              placeholder={t('workforce.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               leftIcon={<Search className="h-4 w-4" />}
@@ -264,8 +266,8 @@ export default function WorkforcePage() {
       {filteredEmployees.length === 0 ? (
         <EmptyState
           icon={<User />}
-          title="No employees found"
-          description="Try adjusting your search or filters"
+          title={t('workforce.noEmployees.title')}
+          description={t('workforce.noEmployees.description')}
         />
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -308,7 +310,7 @@ export default function WorkforcePage() {
                   href={`/workforce/${employee.id}`}
                   className="mt-4 block w-full text-center py-2 border border-surface-200 dark:border-surface-700 rounded-lg text-sm font-medium text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800"
                 >
-                  View Profile
+                  {t('workforce.table.viewProfile')}
                 </Link>
               </div>
             </Card>
@@ -324,35 +326,35 @@ export default function WorkforcePage() {
       <Modal
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
-        title="Add New Employee"
+        title={t('workforce.addEmployee.title')}
         size="lg"
       >
         <form className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <Input label="First Name" placeholder="John" />
-            <Input label="Last Name" placeholder="Doe" />
+            <Input label={t('workforce.addEmployee.firstName')} placeholder="John" />
+            <Input label={t('workforce.addEmployee.lastName')} placeholder="Doe" />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Email" type="email" placeholder="john@example.com" />
-            <Input label="Phone" type="tel" placeholder="+1 234 567 890" />
+            <Input label={t('workforce.addEmployee.email')} type="email" placeholder="john@example.com" />
+            <Input label={t('workforce.addEmployee.phone')} type="tel" placeholder="+1 234 567 890" />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Position" placeholder="Site Supervisor" />
+            <Input label={t('workforce.addEmployee.position')} placeholder="Site Supervisor" />
             <Select
-              label="Department"
+              label={t('workforce.addEmployee.department')}
               options={departmentOptions.filter(d => d.value !== 'all')}
-              placeholder="Select department"
+              placeholder={t('workforce.addEmployee.department')}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Hourly Rate" type="number" placeholder="35" leftIcon={<DollarSign className="h-4 w-4" />} />
-            <Input label="Hire Date" type="date" />
+            <Input label={t('workforce.addEmployee.hourlyRate')} type="number" placeholder="35" leftIcon={<DollarSign className="h-4 w-4" />} />
+            <Input label={t('workforce.addEmployee.hireDate')} type="date" />
           </div>
-          <Input label="Address" placeholder="123 Main St, City, State" />
+          <Input label={t('workforce.addEmployee.address')} placeholder="123 Main St, City, State" />
         </form>
         <ModalFooter>
-          <Button variant="ghost" onClick={() => setShowAddModal(false)}>Cancel</Button>
-          <Button>Add Employee</Button>
+          <Button variant="ghost" onClick={() => setShowAddModal(false)}>{t('common.cancel')}</Button>
+          <Button>{t('workforce.addEmployee.submit')}</Button>
         </ModalFooter>
       </Modal>
     </div>
