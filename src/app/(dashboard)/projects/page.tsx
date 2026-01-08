@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Card, Button, Badge, Input, Select, Progress, Avatar, AvatarGroup } from '@/components/ui';
 import { cn, formatCurrency, formatDate } from '@/lib/utils';
-import { mockProjects, mockEmployees } from '@/data';
-import { PROJECT_STATUS_COLORS, PRIORITY_COLORS, ProjectStatus, ProjectPriority } from '@/types';
+import { useProjects } from '@/hooks/data-hooks';
+import { PROJECT_STATUS_COLORS, PRIORITY_COLORS, ProjectStatus, ProjectPriority, Project } from '@/types';
 import {
   Plus,
   Search,
@@ -26,7 +26,17 @@ export default function ProjectsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
 
-  const filteredProjects = mockProjects.filter((project) => {
+  const { data: projects = [], isLoading, error } = useProjects();
+
+  if (isLoading) {
+    return <div>Loading projects...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading projects: {error.message}</div>;
+  }
+
+  const filteredProjects = projects.filter((project: Project) => {
     const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.clientName.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
@@ -112,7 +122,7 @@ export default function ProjectsPage() {
       {/* Projects Grid/List */}
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredProjects.map((project) => (
+          {filteredProjects.map((project: Project) => (
             <Link href={`/projects/${project.id}`} key={project.id}>
               <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
                 <div className="flex items-start justify-between mb-4">
@@ -191,7 +201,7 @@ export default function ProjectsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
-                {filteredProjects.map((project) => (
+                {filteredProjects.map((project: Project) => (
                   <tr key={project.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
                     <td className="px-6 py-4">
                       <div>

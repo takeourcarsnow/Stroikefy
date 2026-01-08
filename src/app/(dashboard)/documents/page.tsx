@@ -1,10 +1,12 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useState } from 'react';
 import { Card, CardHeader, Button, Badge, Input, Select, Modal, ModalFooter, EmptyState, FileUpload, Textarea } from '@/components/ui';
 import { cn, formatDate, formatFileSize } from '@/lib/utils';
-import { mockDocuments, mockProjects } from '@/data';
-import { DOCUMENT_STATUS_COLORS, Document, DocumentType } from '@/types';
+import { useDocuments, useProjects, useFolders } from '@/hooks/data-hooks';
+import { DOCUMENT_STATUS_COLORS, Document, DocumentType, Project } from '@/types';
 import {
   Plus,
   Search,
@@ -88,6 +90,12 @@ export default function DocumentsPage() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [currentFolder, setCurrentFolder] = useState<string[]>(['All Documents']);
 
+  const { data: documents = [], isLoading: documentsLoading } = useDocuments();
+  const { data: projects = [], isLoading: projectsLoading } = useProjects();
+  const { data: folders = [], isLoading: foldersLoading } = useFolders();
+
+  const isLoading = documentsLoading || projectsLoading || foldersLoading;
+
   const typeOptions = [
     { value: 'all', label: 'All Types' },
     { value: 'contract', label: 'Contracts' },
@@ -104,10 +112,10 @@ export default function DocumentsPage() {
 
   const projectOptions = [
     { value: 'all', label: 'All Projects' },
-    ...mockProjects.map(p => ({ value: p.id, label: p.name })),
+    ...(projects || []).map((p: Project) => ({ value: p.id, label: p.name })),
   ];
 
-  const filteredDocuments = mockDocuments.filter(doc => {
+  const filteredDocuments = (documents || []).filter((doc: Document) => {
     const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = typeFilter === 'all' || doc.type === typeFilter;
     const matchesProject = projectFilter === 'all' || doc.projectId === projectFilter;
@@ -115,7 +123,7 @@ export default function DocumentsPage() {
   });
 
   // Group by folders for visualization
-  const folders = [
+  const folderStats = [
     { name: 'Contracts', count: 3, color: 'bg-blue-500' },
     { name: 'Permits', count: 5, color: 'bg-green-500' },
     { name: 'Blueprints', count: 8, color: 'bg-purple-500' },
@@ -124,11 +132,15 @@ export default function DocumentsPage() {
   ];
 
   // Stats
-  const totalDocs = mockDocuments.length;
-  const totalSize = mockDocuments.reduce((sum, doc) => sum + doc.fileSize, 0);
-  const recentDocs = [...mockDocuments].sort((a, b) => 
+  const totalDocs = documents.length;
+  const totalSize = documents.reduce((sum: number, doc: Document) => sum + doc.fileSize, 0);
+  const recentDocs = [...documents].sort((a, b) => 
     new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   ).slice(0, 5);
+
+  if (isLoading) {
+    return <div>Loading documents...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -277,7 +289,7 @@ export default function DocumentsPage() {
         <div>
           <h2 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">Folders</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {folders.map((folder, index) => (
+            {folderStats.map((folder, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentFolder([...currentFolder, folder.name])}
@@ -316,8 +328,8 @@ export default function DocumentsPage() {
           />
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {filteredDocuments.map(doc => {
-              const project = mockProjects.find(p => p.id === doc.projectId);
+            {filteredDocuments.map((doc: Document) => {
+              const project = projects.find((p: Project) => p.id === doc.projectId);
               return (
                 <div
                   key={doc.id}
@@ -359,8 +371,8 @@ export default function DocumentsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                {filteredDocuments.map(doc => {
-                  const project = mockProjects.find(p => p.id === doc.projectId);
+                {filteredDocuments.map((doc: Document) => {
+                  const project = projects.find((p: Project) => p.id === doc.projectId);
                   return (
                     <tr key={doc.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
                       <td className="p-4">
@@ -428,7 +440,7 @@ export default function DocumentsPage() {
           
           <Select
             label="Folder"
-            options={folders.map(f => ({ value: f.name.toLowerCase(), label: f.name }))}
+            options={folderStats.map(f => ({ value: f.name.toLowerCase(), label: f.name }))}
             placeholder="Select folder"
           />
           

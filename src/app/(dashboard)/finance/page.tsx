@@ -1,10 +1,12 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useState } from 'react';
 import { Card, CardHeader, Button, Badge, Input, Select, Tabs, Table, Modal, ModalFooter, Progress, EmptyState, Textarea } from '@/components/ui';
 import { cn, formatCurrency, formatDate } from '@/lib/utils';
-import { mockInvoices, mockExpenses, mockBudgets, mockProjects } from '@/data';
-import { INVOICE_STATUS_COLORS, EXPENSE_STATUS_COLORS, Invoice, Expense, Budget } from '@/types';
+import { useInvoices, useExpenses, useBudgets, useProjects } from '@/hooks/data-hooks';
+import { INVOICE_STATUS_COLORS, EXPENSE_STATUS_COLORS, Invoice, Expense, Budget, Project } from '@/types';
 import {
   Plus,
   Search,
@@ -46,10 +48,17 @@ export default function FinancePage() {
   const [showNewInvoiceModal, setShowNewInvoiceModal] = useState(false);
   const [showNewExpenseModal, setShowNewExpenseModal] = useState(false);
 
+  const { data: invoices = [], isLoading: invoicesLoading } = useInvoices();
+  const { data: expenses = [], isLoading: expensesLoading } = useExpenses();
+  const { data: budgets = [], isLoading: budgetsLoading } = useBudgets();
+  const { data: projects = [], isLoading: projectsLoading } = useProjects();
+
+  const isLoading = invoicesLoading || expensesLoading || budgetsLoading || projectsLoading;
+
   const tabs = [
     { id: 'overview', label: 'Overview' },
-    { id: 'invoices', label: 'Invoices', count: mockInvoices.length },
-    { id: 'expenses', label: 'Expenses', count: mockExpenses.length },
+    { id: 'invoices', label: 'Invoices', count: (invoices || []).length },
+    { id: 'expenses', label: 'Expenses', count: (expenses || []).length },
     { id: 'budgets', label: 'Budgets' },
   ];
 
@@ -70,21 +79,21 @@ export default function FinancePage() {
     { value: 'reimbursed', label: 'Reimbursed' },
   ];
 
-  const filteredInvoices = mockInvoices.filter(inv => 
+  const filteredInvoices = invoices.filter((inv: Invoice) => 
     invoiceFilter === 'all' || inv.status === invoiceFilter
   );
 
-  const filteredExpenses = mockExpenses.filter(exp => 
+  const filteredExpenses = expenses.filter((exp: Expense) => 
     expenseFilter === 'all' || exp.status === expenseFilter
   );
 
   // Calculate stats
-  const totalInvoiced = mockInvoices.reduce((sum, inv) => sum + inv.total, 0);
-  const totalPaid = mockInvoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.total, 0);
-  const totalPending = mockInvoices.filter(inv => inv.status === 'sent').reduce((sum, inv) => sum + inv.total, 0);
-  const totalExpenses = mockExpenses.reduce((sum, exp) => sum + exp.amount, 0);
-  const totalBudget = mockBudgets.reduce((sum, b) => sum + b.totalBudget, 0);
-  const totalSpent = mockBudgets.reduce((sum, b) => sum + b.spent, 0);
+  const totalInvoiced = invoices.reduce((sum: number, inv: Invoice) => sum + inv.total, 0);
+  const totalPaid = invoices.filter((inv: Invoice) => inv.status === 'paid').reduce((sum: number, inv: Invoice) => sum + inv.total, 0);
+  const totalPending = invoices.filter((inv: Invoice) => inv.status === 'sent').reduce((sum: number, inv: Invoice) => sum + inv.total, 0);
+  const totalExpenses = expenses.reduce((sum: number, exp: Expense) => sum + exp.amount, 0);
+  const totalBudget = budgets.reduce((sum: number, b: Budget) => sum + b.totalBudget, 0);
+  const totalSpent = budgets.reduce((sum: number, b: Budget) => sum + b.spent, 0);
 
   // Chart data
   const monthlyRevenueData = [
@@ -121,7 +130,7 @@ export default function FinancePage() {
       key: 'project',
       header: 'Project',
       render: (invoice: Invoice) => {
-        const project = mockProjects.find(p => p.id === invoice.projectId);
+        const project = projects.find((p: Project) => p.id === invoice.projectId);
         return project?.name || '-';
       },
     },
@@ -191,6 +200,10 @@ export default function FinancePage() {
       ),
     },
   ];
+
+  if (isLoading) {
+    return <div>Loading finance data...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -347,7 +360,7 @@ export default function FinancePage() {
                 }
               />
               <div className="space-y-3">
-                {mockInvoices.slice(0, 5).map(invoice => (
+                {invoices.slice(0, 5).map((invoice: Invoice) => (
                   <div key={invoice.id} className="flex items-center justify-between p-3 rounded-lg bg-surface-50 dark:bg-surface-800/50">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30">
@@ -383,7 +396,7 @@ export default function FinancePage() {
                 }
               />
               <div className="space-y-3">
-                {mockExpenses.slice(0, 5).map(expense => (
+                {expenses.slice(0, 5).map((expense: Expense) => (
                   <div key={expense.id} className="flex items-center justify-between p-3 rounded-lg bg-surface-50 dark:bg-surface-800/50">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30">
@@ -505,8 +518,8 @@ export default function FinancePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {mockBudgets.map(budget => {
-              const project = mockProjects.find(p => p.id === budget.projectId);
+            {budgets.map((budget: Budget) => {
+              const project = projects.find((p: Project) => p.id === budget.projectId);
               const percentage = (budget.spent / budget.totalBudget) * 100;
               const isOverBudget = percentage > 100;
               
@@ -562,7 +575,7 @@ export default function FinancePage() {
             <Input label="Invoice Number" placeholder="INV-001" />
             <Select
               label="Project"
-              options={mockProjects.map(p => ({ value: p.id, label: p.name }))}
+              options={projects.map((p: Project) => ({ value: p.id, label: p.name }))}
               placeholder="Select project"
             />
           </div>
@@ -612,7 +625,7 @@ export default function FinancePage() {
           </div>
           <Select
             label="Project"
-            options={mockProjects.map(p => ({ value: p.id, label: p.name }))}
+            options={projects.map((p: Project) => ({ value: p.id, label: p.name }))}
             placeholder="Select project (optional)"
           />
           <Input label="Receipt URL" type="url" placeholder="https://..." />

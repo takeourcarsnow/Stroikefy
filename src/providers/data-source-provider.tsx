@@ -2,12 +2,11 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { isSupabaseConfigured } from '@/lib/supabase';
 
 // Data source types
-export type DataSource = 'supabase' | 'demo';
+export type DataSource = 'supabase';
 
 // Context for data source management
 interface DataSourceContextType {
   dataSource: DataSource;
-  setDataSource: (source: DataSource) => void;
   isSupabaseAvailable: boolean;
   setSupabaseAvailable: (available: boolean) => void;
 }
@@ -16,7 +15,7 @@ const DataSourceContext = createContext<DataSourceContextType | undefined>(undef
 
 // Provider component
 export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
-  const [dataSource, setDataSource] = useState<DataSource>('demo'); // Default to demo for development
+  const [dataSource] = useState<DataSource>('supabase'); // Always use Supabase
   const [isSupabaseAvailable, setSupabaseAvailable] = useState(false);
 
   useEffect(() => {
@@ -32,7 +31,6 @@ export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
     <DataSourceContext.Provider
       value={{
         dataSource,
-        setDataSource,
         isSupabaseAvailable,
         setSupabaseAvailable,
       }}
@@ -51,38 +49,25 @@ export const useDataSource = () => {
   return context;
 };
 
-// Generic hook that switches between Supabase and demo data
+// Generic hook that uses Supabase data
 export const useDataWithFallback = <T,>(
   supabaseHook: (options?: { enabled?: boolean }) => any,
-  demoData: T,
   options?: {
     enabled?: boolean;
-    fallbackOnError?: boolean;
   }
 ) => {
-  const { dataSource, isSupabaseAvailable } = useDataSource();
+  const { isSupabaseAvailable } = useDataSource();
 
-  const shouldUseSupabase = dataSource === 'supabase' && isSupabaseAvailable;
+  // Always try to use Supabase
+  const supabaseResult = supabaseHook({ enabled: options?.enabled ?? true });
 
-  // Only call the Supabase hook when using Supabase
-  const supabaseResult = shouldUseSupabase ? supabaseHook({ enabled: options?.enabled ?? true }) : null;
-
-  // If using demo data or Supabase is not available, return demo data
-  if (!shouldUseSupabase || !supabaseResult) {
+  // If Supabase is not available, return error state
+  if (!isSupabaseAvailable) {
     return {
-      data: demoData,
+      data: null,
       isLoading: false,
-      error: null,
-      isDemoData: true,
-    };
-  }
-
-  // If there's an error and fallback is enabled, use demo data
-  if (supabaseResult.error && options?.fallbackOnError) {
-    return {
-      ...supabaseResult,
-      data: demoData,
-      isDemoData: true,
+      error: new Error('Supabase is not configured'),
+      isDemoData: false,
     };
   }
 

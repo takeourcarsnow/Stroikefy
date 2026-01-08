@@ -6,7 +6,6 @@ import { useThemeStore, useSidebarStore, useAuthStore } from '@/store';
 import { useTranslation } from '@/hooks';
 import { Avatar, Dropdown, Badge } from '@/components/ui';
 import { LanguageSwitcher } from './language-switcher';
-import { DataSourceSwitcher } from './data-source-switcher';
 import {
   Menu,
   Search,
@@ -88,9 +87,6 @@ export function Header() {
 
       {/* Right side */}
       <div className="flex items-center gap-2">
-        {/* Data Source Switcher */}
-        <DataSourceSwitcher />
-
         {/* Language Switcher */}
         <LanguageSwitcher />
 

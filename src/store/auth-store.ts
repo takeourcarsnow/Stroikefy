@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, ROLE_PERMISSIONS, RolePermissions } from '@/types';
-import { currentUser } from '@/data/users';
 
 interface AuthStore {
   user: User | null;
@@ -18,21 +17,28 @@ interface AuthStore {
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
-      // Start with mock user for demo
-      user: currentUser,
-      isAuthenticated: true,
+      // Start with no user - authentication required
+      user: null,
+      isAuthenticated: false,
       isLoading: false,
-      permissions: ROLE_PERMISSIONS[currentUser.role],
+      permissions: null,
       
       login: async (email: string, _password: string) => {
         set({ isLoading: true });
         
         // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve => setTimeout, 1000));
         
         // Mock login - in production, this would call Supabase auth
         if (email) {
-          const user = { ...currentUser, email };
+          const user: User = {
+            id: '1',
+            name: 'Demo User',
+            email,
+            role: 'admin',
+            avatar: '',
+            createdAt: new Date(),
+          };
           set({ 
             user, 
             isAuthenticated: true, 

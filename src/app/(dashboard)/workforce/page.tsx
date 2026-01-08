@@ -1,11 +1,13 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Card, CardHeader, Button, Badge, Input, Select, Avatar, Modal, ModalFooter, Table, EmptyState } from '@/components/ui';
 import { cn, formatDate, formatCurrency } from '@/lib/utils';
-import { mockEmployees, mockTimeEntries } from '@/data';
-import { EMPLOYEE_STATUS_COLORS, Employee, EmployeeStatus } from '@/types';
+import { useEmployees, useTimeEntries } from '@/hooks/data-hooks';
+import { EMPLOYEE_STATUS_COLORS, Employee, EmployeeStatus, TimeEntry } from '@/types';
 import {
   Plus,
   Search,
@@ -32,6 +34,15 @@ export default function WorkforcePage() {
   const [departmentFilter, setDepartmentFilter] = useState<string>('all');
   const [showAddModal, setShowAddModal] = useState(false);
 
+  const { data: employees = [], isLoading: employeesLoading } = useEmployees();
+  const { data: timeEntries = [], isLoading: timeEntriesLoading } = useTimeEntries();
+
+  const isLoading = employeesLoading || timeEntriesLoading;
+
+  if (isLoading) {
+    return <div>Loading workforce data...</div>;
+  }
+
   const statusOptions = [
     { value: 'all', label: 'All Status' },
     { value: 'active', label: 'Active' },
@@ -50,7 +61,7 @@ export default function WorkforcePage() {
     { value: 'Logistics', label: 'Logistics' },
   ];
 
-  const filteredEmployees = mockEmployees.filter(employee => {
+  const filteredEmployees = (employees || []).filter((employee: Employee) => {
     const matchesSearch = employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       employee.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       employee.position.toLowerCase().includes(searchQuery.toLowerCase());
@@ -92,7 +103,7 @@ export default function WorkforcePage() {
       key: 'status',
       header: 'Status',
       render: (employee: Employee) => (
-        <Badge variant="custom" className={EMPLOYEE_STATUS_COLORS[employee.status]}>
+        <Badge variant="custom" className={EMPLOYEE_STATUS_COLORS[employee.status as keyof typeof EMPLOYEE_STATUS_COLORS]}>
           {employee.status.replace('-', ' ')}
         </Badge>
       ),
@@ -140,9 +151,9 @@ export default function WorkforcePage() {
   ];
 
   // Stats
-  const activeCount = mockEmployees.filter(e => e.status === 'active').length;
-  const onLeaveCount = mockEmployees.filter(e => e.status === 'on-leave').length;
-  const totalHours = mockTimeEntries.reduce((sum, entry) => sum + entry.totalHours, 0);
+  const activeCount = (employees || []).filter((e: Employee) => e.status === 'active').length;
+  const onLeaveCount = (employees || []).filter((e: Employee) => e.status === 'on-leave').length;
+  const totalHours = (timeEntries || []).reduce((sum: number, entry: TimeEntry) => sum + entry.totalHours, 0);
 
   return (
     <div className="space-y-6">
@@ -171,7 +182,7 @@ export default function WorkforcePage() {
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/30 mx-auto mb-3">
             <User className="h-6 w-6 text-primary-600" />
           </div>
-          <h3 className="text-2xl font-bold text-surface-900 dark:text-white">{mockEmployees.length}</h3>
+          <h3 className="text-2xl font-bold text-surface-900 dark:text-white">{employees.length}</h3>
           <p className="text-sm text-surface-500">Total Employees</p>
         </Card>
         <Card className="text-center">
@@ -258,7 +269,7 @@ export default function WorkforcePage() {
         />
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredEmployees.map(employee => (
+          {filteredEmployees.map((employee: Employee) => (
             <Card key={employee.id} className="hover:shadow-md transition-shadow">
               <div className="text-center">
                 <Avatar 
@@ -274,7 +285,7 @@ export default function WorkforcePage() {
                   {employee.name}
                 </Link>
                 <p className="text-surface-500 mb-2">{employee.position}</p>
-                <Badge variant="custom" className={EMPLOYEE_STATUS_COLORS[employee.status]}>
+                <Badge variant="custom" className={EMPLOYEE_STATUS_COLORS[employee.status as keyof typeof EMPLOYEE_STATUS_COLORS]}>
                   {employee.status.replace('-', ' ')}
                 </Badge>
                 

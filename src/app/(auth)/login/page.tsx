@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card, Button, Input } from '@/components/ui';
 import { useAuthStore } from '@/store';
-import { mockUsers } from '@/data';
+import { supabase } from '@/lib/supabase';
 import {
   Building2,
   Mail,
@@ -30,17 +30,40 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // Check if Supabase is configured
+      if (!supabase) {
+        throw new Error('Supabase is not configured. Please check your environment variables.');
+      }
 
-    // Mock authentication
-    const user = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
-    
-    if (user && password === 'password') {
-      loginWithUser(user);
-      router.push('/dashboard');
-    } else {
-      setError('Invalid email or password');
+      // Use Supabase authentication
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setError(error.message);
+        setIsLoading(false);
+        return;
+      }
+
+      if (data.user) {
+        // Create user object from Supabase user
+        const user = {
+          id: data.user.id,
+          email: data.user.email || '',
+          name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
+          role: data.user.user_metadata?.role || 'worker',
+          avatar: data.user.user_metadata?.avatar_url || '',
+          createdAt: new Date(data.user.created_at),
+        };
+        
+        loginWithUser(user);
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      setError('An error occurred during login');
       setIsLoading(false);
     }
   };

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, Button, Badge, Input, Select, Modal, ModalFooter } from '@/components/ui';
 import { cn, formatCurrency, formatDate } from '@/lib/utils';
-import { mockProjects } from '@/data';
+import { useProjects } from '@/hooks/data-hooks';
 import { PROJECT_STATUS_COLORS, Project } from '@/types';
 import {
   Search,
@@ -47,6 +47,8 @@ export default function MapPage() {
   const [showProjectList, setShowProjectList] = useState(true);
   const [isClient, setIsClient] = useState(false);
 
+  const { data: projects = [], isLoading } = useProjects();
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -59,7 +61,7 @@ export default function MapPage() {
     { value: 'completed', label: 'Completed' },
   ];
 
-  const filteredProjects = mockProjects.filter(project => {
+  const filteredProjects = (projects || []).filter((project: Project) => {
     return statusFilter === 'all' || project.status === statusFilter;
   });
 
@@ -98,7 +100,7 @@ export default function MapPage() {
           <Card className="w-80 flex-shrink-0 flex flex-col overflow-hidden">
             <CardHeader title="Projects" description={`${filteredProjects.length} sites`} />
             <div className="flex-1 overflow-y-auto space-y-2 pr-2">
-              {filteredProjects.map(project => (
+              {filteredProjects.map((project: Project) => (
                 <button
                   key={project.id}
                   onClick={() => setSelectedProject(project)}
@@ -150,7 +152,7 @@ export default function MapPage() {
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {filteredProjects.map(project => (
+                {filteredProjects.map((project: Project) => (
                   <Marker
                     key={project.id}
                     position={[project.location.lat, project.location.lng]}
@@ -222,7 +224,7 @@ export default function MapPage() {
                 { status: 'in-progress', color: 'bg-blue-500' },
                 { status: 'on-hold', color: 'bg-orange-500' },
                 { status: 'completed', color: 'bg-green-500' },
-              ].map(item => (
+              ].map((item: { status: string; color: string }) => (
                 <div key={item.status} className="flex items-center gap-2 text-sm">
                   <span className={cn('w-3 h-3 rounded-full', item.color)} />
                   <span className="text-surface-600 dark:text-surface-400 capitalize">{item.status}</span>

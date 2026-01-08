@@ -1,84 +1,68 @@
 import { useDataWithFallback } from '@/providers/data-source-provider';
 import * as supabaseHooks from './supabase-hooks';
-import * as demoData from '@/data';
 
 // =====================================================
-// DASHBOARD HOOKS WITH FALLBACK
+// DASHBOARD HOOKS
 // =====================================================
 
 export const useDashboardStats = () => {
   return useDataWithFallback(
-    (options) => supabaseHooks.useDashboardStats(options),
-    demoData.dashboardStats,
-    { fallbackOnError: true }
+    (options) => supabaseHooks.useDashboardStats(options)
   );
 };
 
 export const useRecentProjects = () => {
   return useDataWithFallback(
-    (options) => supabaseHooks.useRecentProjects(options),
-    demoData.recentProjects,
-    { fallbackOnError: true }
+    (options) => supabaseHooks.useRecentProjects(options)
   );
 };
 
 export const useRecentTasks = () => {
   return useDataWithFallback(
-    (options) => supabaseHooks.useRecentTasks(options),
-    demoData.recentTasks,
-    { fallbackOnError: true }
+    (options) => supabaseHooks.useRecentTasks(options)
   );
 };
 
 export const useMonthlyRevenue = () => {
   return useDataWithFallback(
-    (options) => supabaseHooks.useMonthlyRevenue(options),
-    demoData.monthlyRevenue,
-    { fallbackOnError: true }
+    (options) => supabaseHooks.useMonthlyRevenue(options)
   );
 };
 
 export const useProjectStatusDistribution = () => {
   return useDataWithFallback(
-    (options) => supabaseHooks.useProjectStatusDistribution(options),
-    demoData.projectStatusDistribution,
-    { fallbackOnError: true }
+    (options) => supabaseHooks.useProjectStatusDistribution(options)
   );
 };
 
 // =====================================================
-// PROJECTS HOOKS WITH FALLBACK
+// PROJECTS HOOKS
 // =====================================================
 
 export const useProjects = (filters?: { status?: string; priority?: string }) => {
   return useDataWithFallback(
-    () => supabaseHooks.useProjects(filters),
-    demoData.getProjects(filters),
-    { fallbackOnError: true }
+    () => supabaseHooks.useProjects(filters)
   );
 };
 
 export const useProject = (id: string) => {
   return useDataWithFallback(
     () => supabaseHooks.useProject(id),
-    demoData.getProject(id),
-    { fallbackOnError: true, enabled: !!id }
+    { enabled: !!id }
   );
 };
 
 export const useProjectTasks = (projectId: string) => {
   return useDataWithFallback(
     () => supabaseHooks.useProjectTasks(projectId),
-    demoData.getTasks({ project_id: projectId }),
-    { fallbackOnError: true, enabled: !!projectId }
+    { enabled: !!projectId }
   );
 };
 
 export const useProjectEmployees = (projectId: string) => {
   return useDataWithFallback(
     () => supabaseHooks.useProjectEmployees(projectId),
-    demoData.getEmployees({ project_id: projectId }),
-    { fallbackOnError: true, enabled: !!projectId }
+    { enabled: !!projectId }
   );
 };
 
@@ -86,46 +70,39 @@ export const useCreateProject = () => supabaseHooks.useCreateProject();
 export const useUpdateProject = () => supabaseHooks.useUpdateProject();
 
 // =====================================================
-// WORKFORCE HOOKS WITH FALLBACK
+// WORKFORCE HOOKS
 // =====================================================
 
 export const useEmployees = (filters?: { status?: string; department?: string }) => {
   return useDataWithFallback(
-    (options) => supabaseHooks.useEmployees(filters, options),
-    filters ? demoData.getEmployees(filters) : demoData.employees,
-    { fallbackOnError: true }
+    (options) => supabaseHooks.useEmployees(filters, options)
   );
 };
 
 export const useEmployee = (id: string) => {
   return useDataWithFallback(
     () => supabaseHooks.useEmployee(id),
-    demoData.getEmployee(id),
-    { fallbackOnError: true, enabled: !!id }
+    { enabled: !!id }
   );
 };
 
 export const useEmployeeProjects = (employeeId: string) => {
   return useDataWithFallback(
     () => supabaseHooks.useEmployeeProjects(employeeId),
-    demoData.getProjects({ employee_id: employeeId }),
-    { fallbackOnError: true, enabled: !!employeeId }
+    { enabled: !!employeeId }
   );
 };
 
 export const useEmployeeTimeEntries = (employeeId: string, dateRange?: { start: string; end: string }) => {
   return useDataWithFallback(
     () => supabaseHooks.useEmployeeTimeEntries(employeeId, dateRange),
-    demoData.getTimeEntries({ employee_id: employeeId, date_range: dateRange }),
-    { fallbackOnError: true, enabled: !!employeeId }
+    { enabled: !!employeeId }
   );
 };
 
 export const useAttendance = (date?: string) => {
   return useDataWithFallback(
-    () => supabaseHooks.useAttendance(date),
-    demoData.getAttendance(date),
-    { fallbackOnError: true }
+    () => supabaseHooks.useAttendance(date)
   );
 };
 
@@ -133,30 +110,24 @@ export const useCreateTimeEntry = () => supabaseHooks.useCreateTimeEntry();
 export const useCreateAttendance = () => supabaseHooks.useCreateAttendance();
 
 // =====================================================
-// FINANCE HOOKS WITH FALLBACK
+// FINANCE HOOKS
 // =====================================================
 
 export const useInvoices = (filters?: { status?: string; type?: string }) => {
   return useDataWithFallback(
-    (options) => supabaseHooks.useInvoices(filters, options),
-    filters ? demoData.getInvoices(filters) : demoData.invoices,
-    { fallbackOnError: true }
+    (options) => supabaseHooks.useInvoices(filters, options)
   );
 };
 
 export const useExpenses = (filters?: { status?: string; category?: string }) => {
   return useDataWithFallback(
-    () => supabaseHooks.useExpenses(filters),
-    demoData.getExpenses(filters),
-    { fallbackOnError: true }
+    () => supabaseHooks.useExpenses(filters)
   );
 };
 
 export const useBudgets = () => {
   return useDataWithFallback(
-    supabaseHooks.useBudgets,
-    demoData.getBudgets(),
-    { fallbackOnError: true }
+    supabaseHooks.useBudgets
   );
 };
 
@@ -164,30 +135,24 @@ export const useCreateInvoice = () => supabaseHooks.useCreateInvoice();
 export const useCreateExpense = () => supabaseHooks.useCreateExpense();
 
 // =====================================================
-// INVENTORY HOOKS WITH FALLBACK
+// INVENTORY HOOKS
 // =====================================================
 
 export const useInventory = (filters?: { category?: string; stock_status?: string }) => {
   return useDataWithFallback(
-    (options) => supabaseHooks.useInventory(filters, options),
-    filters ? demoData.getInventory(filters) : demoData.inventory,
-    { fallbackOnError: true }
+    (options) => supabaseHooks.useInventory(filters, options)
   );
 };
 
 export const useOrders = (filters?: { status?: string }) => {
   return useDataWithFallback(
-    () => supabaseHooks.useOrders(filters),
-    demoData.getOrders(filters),
-    { fallbackOnError: true }
+    () => supabaseHooks.useOrders(filters)
   );
 };
 
 export const useStockMovements = (itemId?: string) => {
   return useDataWithFallback(
-    () => supabaseHooks.useStockMovements(itemId),
-    demoData.getStockMovements(itemId),
-    { fallbackOnError: true }
+    () => supabaseHooks.useStockMovements(itemId)
   );
 };
 
@@ -195,44 +160,36 @@ export const useCreateOrder = () => supabaseHooks.useCreateOrder();
 export const useUpdateInventory = () => supabaseHooks.useUpdateInventory();
 
 // =====================================================
-// DOCUMENTS HOOKS WITH FALLBACK
+// DOCUMENTS HOOKS
 // =====================================================
 
 export const useFolders = () => {
   return useDataWithFallback(
-    supabaseHooks.useFolders,
-    demoData.getFolders(),
-    { fallbackOnError: true }
+    supabaseHooks.useFolders
   );
 };
 
 export const useDocuments = (filters?: { folder_id?: string; project_id?: string; type?: string }) => {
   return useDataWithFallback(
-    () => supabaseHooks.useDocuments(filters),
-    demoData.getDocuments(filters),
-    { fallbackOnError: true }
+    () => supabaseHooks.useDocuments(filters)
   );
 };
 
 export const useCreateDocument = () => supabaseHooks.useCreateDocument();
 
 // =====================================================
-// TIME TRACKING HOOKS WITH FALLBACK
+// TIME TRACKING HOOKS
 // =====================================================
 
 export const useTimeEntries = (filters?: { employee_id?: string; project_id?: string; date_range?: { start: string; end: string } }) => {
   return useDataWithFallback(
-    () => supabaseHooks.useTimeEntries(filters),
-    demoData.getTimeEntries(filters),
-    { fallbackOnError: true }
+    () => supabaseHooks.useTimeEntries(filters)
   );
 };
 
 export const useTasks = (filters?: { project_id?: string; status?: string; assignee_id?: string }) => {
   return useDataWithFallback(
-    () => supabaseHooks.useTasks(filters),
-    demoData.getTasks(filters),
-    { fallbackOnError: true }
+    () => supabaseHooks.useTasks(filters)
   );
 };
 
@@ -240,22 +197,19 @@ export const useCreateTask = () => supabaseHooks.useCreateTask();
 export const useUpdateTask = () => supabaseHooks.useUpdateTask();
 
 // =====================================================
-// SETTINGS HOOKS WITH FALLBACK
+// SETTINGS HOOKS
 // =====================================================
 
 export const useUsers = () => {
   return useDataWithFallback(
-    supabaseHooks.useUsers,
-    demoData.getUsers(),
-    { fallbackOnError: true }
+    supabaseHooks.useUsers
   );
 };
 
 export const useUser = (id: string) => {
   return useDataWithFallback(
     () => supabaseHooks.useUser(id),
-    demoData.getUser(id),
-    { fallbackOnError: true, enabled: !!id }
+    { enabled: !!id }
   );
 };
 

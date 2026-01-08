@@ -1,10 +1,12 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, Button, Badge, Input, Select, Modal, ModalFooter, Table } from '@/components/ui';
 import { cn, formatDate, formatCurrency } from '@/lib/utils';
-import { mockEmployees, mockProjects, mockTimeEntries } from '@/data';
-import { TimeEntry } from '@/types';
+import { useTimeEntries, useEmployees, useProjects } from '@/hooks/data-hooks';
+import { TimeEntry, Project, Employee } from '@/types';
 import {
   Play,
   Pause,
@@ -36,6 +38,12 @@ export default function TimeTrackingPage() {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  const { data: timeEntries = [], isLoading: timeEntriesLoading } = useTimeEntries();
+  const { data: employees = [], isLoading: employeesLoading } = useEmployees();
+  const { data: projects = [], isLoading: projectsLoading } = useProjects();
+
+  const isLoading = timeEntriesLoading || employeesLoading || projectsLoading;
 
   // Timer effect
   useEffect(() => {
@@ -80,18 +88,18 @@ export default function TimeTrackingPage() {
     { value: 'rejected', label: 'Rejected' },
   ];
 
-  const filteredEntries = mockTimeEntries.filter(entry => 
+  const filteredEntries = (timeEntries || []).filter((entry: TimeEntry) => 
     statusFilter === 'all' || entry.status === statusFilter
   );
 
   // Stats
-  const totalHoursToday = mockTimeEntries
-    .filter(e => e.date.toISOString().split('T')[0] === selectedDate)
-    .reduce((sum, e) => sum + e.totalHours, 0);
+  const totalHoursToday = (timeEntries || [])
+    .filter((e: TimeEntry) => e.date.toISOString().split('T')[0] === selectedDate)
+    .reduce((sum: number, e: TimeEntry) => sum + e.totalHours, 0);
 
-  const totalHoursWeek = mockTimeEntries.reduce((sum, e) => sum + e.totalHours, 0);
-  const totalOvertimeWeek = mockTimeEntries.reduce((sum, e) => sum + Math.max(0, e.totalHours - 8), 0);
-  const pendingApproval = mockTimeEntries.filter(e => e.status === 'pending').length;
+  const totalHoursWeek = (timeEntries || []).reduce((sum: number, e: TimeEntry) => sum + e.totalHours, 0);
+  const totalOvertimeWeek = (timeEntries || []).reduce((sum: number, e: TimeEntry) => sum + Math.max(0, e.totalHours - 8), 0);
+  const pendingApproval = (timeEntries || []).filter((e: TimeEntry) => e.status === 'pending').length;
 
   // Weekly chart data
   const weeklyData = [
@@ -114,7 +122,7 @@ export default function TimeTrackingPage() {
       key: 'employee',
       header: 'Employee',
       render: (entry: TimeEntry) => {
-        const employee = mockEmployees.find(e => e.id === entry.employeeId);
+        const employee = employees.find((e: Employee) => e.id === entry.employeeId);
         return employee?.name || '-';
       },
     },
@@ -122,7 +130,7 @@ export default function TimeTrackingPage() {
       key: 'project',
       header: 'Project',
       render: (entry: TimeEntry) => {
-        const project = mockProjects.find(p => p.id === entry.projectId);
+        const project = projects.find((p: Project) => p.id === entry.projectId);
         return project?.name || '-';
       },
     },
@@ -174,6 +182,10 @@ export default function TimeTrackingPage() {
     },
   ];
 
+  if (isLoading) {
+    return <div>Loading time tracking data...</div>;
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -200,7 +212,7 @@ export default function TimeTrackingPage() {
             <div className="text-5xl font-mono font-bold mb-4">{formatTime(elapsedTime)}</div>
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <Select
-                options={mockProjects.map(p => ({ value: p.id, label: p.name }))}
+                options={projects.map((p: Project) => ({ value: p.id, label: p.name }))}
                 value={selectedProject}
                 onChange={setSelectedProject}
                 placeholder="Select project"
@@ -241,7 +253,7 @@ export default function TimeTrackingPage() {
               <Clock className="h-8 w-8 mx-auto mb-2 animate-pulse" />
               <p className="text-sm text-primary-100">Tracking active</p>
               <p className="font-medium">
-                {mockProjects.find(p => p.id === selectedProject)?.name || 'No project'}
+                {projects.find((p: Project) => p.id === selectedProject)?.name || 'No project'}
               </p>
             </div>
           )}
@@ -356,12 +368,12 @@ export default function TimeTrackingPage() {
         <form className="space-y-4">
           <Select
             label="Employee"
-            options={mockEmployees.map(e => ({ value: e.id, label: e.name }))}
+            options={employees.map((e: Employee) => ({ value: e.id, label: e.name }))}
             placeholder="Select employee"
           />
           <Select
             label="Project"
-            options={mockProjects.map(p => ({ value: p.id, label: p.name }))}
+            options={projects.map((p: Project) => ({ value: p.id, label: p.name }))}
             placeholder="Select project"
           />
           <Input label="Date" type="date" defaultValue={new Date().toISOString().split('T')[0]} />

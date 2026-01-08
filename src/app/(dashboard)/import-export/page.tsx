@@ -4,7 +4,7 @@ import React, { useState, useCallback } from 'react';
 import { Card, CardHeader, Button, Badge, Select, Modal, ModalFooter, FileUpload, Table, Alert } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { parseExcelFile, exportToExcel, mapEmployeeRow, mapInventoryRow, mapTaskRow, downloadSampleTemplate } from '@/lib/excel';
-import { mockProjects, mockEmployees, mockInventoryItems } from '@/data';
+import { useProjects, useEmployees, useInventory } from '@/hooks/data-hooks';
 import {
   Upload,
   Download,
@@ -39,6 +39,12 @@ export default function ImportExportPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
+  const { data: employees = [], isLoading: employeesLoading } = useEmployees();
+  const { data: projects = [], isLoading: projectsLoading } = useProjects();
+  const { data: inventoryItems = [], isLoading: inventoryLoading } = useInventory();
+
+  const isLoading = employeesLoading || projectsLoading || inventoryLoading;
+
   const importTypes = [
     { value: 'employees', label: 'Employees', icon: Users, description: 'Import employee data' },
     { value: 'inventory', label: 'Inventory', icon: Package, description: 'Import inventory items' },
@@ -46,9 +52,9 @@ export default function ImportExportPage() {
   ];
 
   const exportTypes = [
-    { type: 'employees', label: 'Employees', icon: Users, data: mockEmployees },
-    { type: 'projects', label: 'Projects', icon: FileText, data: mockProjects },
-    { type: 'inventory', label: 'Inventory', icon: Package, data: mockInventoryItems },
+    { type: 'employees', label: 'Employees', icon: Users, data: employees },
+    { type: 'projects', label: 'Projects', icon: FileText, data: projects },
+    { type: 'inventory', label: 'Inventory', icon: Package, data: inventoryItems },
   ];
 
   const handleFileSelect = (files: File[]) => {
@@ -355,13 +361,14 @@ export default function ImportExportPage() {
                     Export {item.label}
                   </h3>
                   <p className="text-surface-500 mb-4">
-                    {item.data.length} records available
+                    {isLoading ? 'Loading...' : `${item.data.length} records available`}
                   </p>
                   <div className="space-y-2">
                     <Button 
                       className="w-full"
                       onClick={() => handleExport(item.type, item.data)}
                       leftIcon={<FileSpreadsheet className="h-4 w-4" />}
+                      disabled={isLoading}
                     >
                       Export as Excel
                     </Button>
@@ -371,7 +378,7 @@ export default function ImportExportPage() {
                       onClick={() => {
                         const csv = [
                           Object.keys(item.data[0] || {}).join(','),
-                          ...item.data.map(row => Object.values(row).join(','))
+                          ...item.data.map((row: Record<string, any>) => Object.values(row).join(','))
                         ].join('\n');
                         const blob = new Blob([csv], { type: 'text/csv' });
                         const url = URL.createObjectURL(blob);
@@ -380,6 +387,7 @@ export default function ImportExportPage() {
                         a.download = `${item.type}_export.csv`;
                         a.click();
                       }}
+                      disabled={isLoading}
                     >
                       Export as CSV
                     </Button>

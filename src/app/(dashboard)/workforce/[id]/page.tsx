@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Card, CardHeader, Button, Badge, Input, Select, Avatar, Tabs, Progress, Modal, ModalFooter, Table } from '@/components/ui';
 import { cn, formatDate, formatCurrency, formatRelativeTime } from '@/lib/utils';
-import { mockEmployees, mockTimeEntries, mockProjects } from '@/data';
-import { EMPLOYEE_STATUS_COLORS, TimeEntry, PROJECT_STATUS_COLORS } from '@/types';
+import { useEmployees, useTimeEntries, useProjects } from '@/hooks/data-hooks';
+import { EMPLOYEE_STATUS_COLORS, TimeEntry, PROJECT_STATUS_COLORS, Employee, Project } from '@/types';
 import {
   ArrowLeft,
   Edit,
@@ -27,11 +27,29 @@ import {
 export default function EmployeeDetailPage() {
   const params = useParams();
   const employeeId = params.id as string;
-  const employee = mockEmployees.find(e => e.id === employeeId);
-  const timeEntries = mockTimeEntries.filter(t => t.employeeId === employeeId);
+
+  const { data: employees = [], isLoading: employeesLoading } = useEmployees();
+  const { data: timeEntriesData = [], isLoading: timeEntriesLoading } = useTimeEntries();
+  const { data: projects = [], isLoading: projectsLoading } = useProjects();
+
+  const isLoading = employeesLoading || timeEntriesLoading || projectsLoading;
+
+  const employee = employees.find((e: Employee) => e.id === employeeId);
+  const timeEntries = timeEntriesData.filter((t: TimeEntry) => t.employeeId === employeeId);
   
   const [activeTab, setActiveTab] = useState('overview');
   const [showLogTimeModal, setShowLogTimeModal] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-surface-500">Loading employee details...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!employee) {
     return (
@@ -51,11 +69,11 @@ export default function EmployeeDetailPage() {
     { id: 'documents', label: 'Documents' },
   ];
 
-  const totalHoursWorked = timeEntries.reduce((sum, entry) => sum + entry.totalHours, 0);
-  const totalOvertimeHours = timeEntries.reduce((sum, entry) => sum + Math.max(0, entry.totalHours - 8), 0);
+  const totalHoursWorked = timeEntries.reduce((sum: number, entry: TimeEntry) => sum + entry.totalHours, 0);
+  const totalOvertimeHours = timeEntries.reduce((sum: number, entry: TimeEntry) => sum + Math.max(0, entry.totalHours - 8), 0);
   const hourlyRate = employee.salary / 2080;
   const totalEarnings = totalHoursWorked * hourlyRate;
-  const employeeProjects = mockProjects.filter(p => 
+  const employeeProjects = projects.filter((p: Project) => 
     p.managerId === employeeId || Math.random() > 0.5
   ).slice(0, 4);
 
@@ -69,7 +87,7 @@ export default function EmployeeDetailPage() {
       key: 'project',
       header: 'Project',
       render: (entry: TimeEntry) => {
-        const project = mockProjects.find(p => p.id === entry.projectId);
+        const project = projects.find((p: Project) => p.id === entry.projectId);
         return project?.name || '-';
       },
     },
@@ -120,7 +138,7 @@ export default function EmployeeDetailPage() {
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-2">
                 <h1 className="text-2xl font-bold text-surface-900 dark:text-white">{employee.name}</h1>
-                <Badge variant="custom" className={EMPLOYEE_STATUS_COLORS[employee.status]}>
+                <Badge variant="custom" className={EMPLOYEE_STATUS_COLORS[employee.status as keyof typeof EMPLOYEE_STATUS_COLORS]}>
                   {employee.status.replace('-', ' ')}
                 </Badge>
               </div>
@@ -207,8 +225,8 @@ export default function EmployeeDetailPage() {
                 }
               />
               <div className="space-y-3">
-                {timeEntries.slice(0, 5).map(entry => {
-                  const project = mockProjects.find(p => p.id === entry.projectId);
+                {timeEntries.slice(0, 5).map((entry: TimeEntry) => {
+                  const project = projects.find((p: Project) => p.id === entry.projectId);
                   return (
                     <div key={entry.id} className="flex items-center justify-between p-3 rounded-lg bg-surface-50 dark:bg-surface-800/50">
                       <div>
@@ -239,7 +257,7 @@ export default function EmployeeDetailPage() {
                 }
               />
               <div className="space-y-3">
-                {employeeProjects.slice(0, 3).map(project => (
+                {employeeProjects.slice(0, 3).map((project: Project) => (
                   <Link
                     key={project.id}
                     href={`/projects/${project.id}`}
@@ -281,7 +299,7 @@ export default function EmployeeDetailPage() {
                   <div>
                     <p className="text-sm text-surface-500 mb-2">Certifications</p>
                     <div className="flex flex-wrap gap-2">
-                      {employee.certifications.map((cert, index) => (
+                      {employee.certifications.map((cert: string, index: number) => (
                         <Badge key={index} variant="default">{cert}</Badge>
                       ))}
                     </div>
@@ -291,7 +309,7 @@ export default function EmployeeDetailPage() {
                   <div>
                     <p className="text-sm text-surface-500 mb-2">Skills</p>
                     <div className="flex flex-wrap gap-2">
-                      {employee.skills.map((skill, index) => (
+                      {employee.skills.map((skill: string, index: number) => (
                         <Badge key={index} variant="default">{skill}</Badge>
                       ))}
                     </div>
@@ -304,7 +322,7 @@ export default function EmployeeDetailPage() {
             <Card>
               <CardHeader title="This Week" />
               <div className="space-y-3">
-                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day, index) => {
+                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day: string, index: number) => {
                   const hasEntry = index < timeEntries.length;
                   return (
                     <div key={day} className="flex items-center justify-between">
@@ -337,7 +355,7 @@ export default function EmployeeDetailPage() {
 
       {activeTab === 'projects' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {employeeProjects.map(project => (
+          {employeeProjects.map((project: Project) => (
             <Card key={project.id}>
               <div className="flex items-start justify-between mb-4">
                 <div>
@@ -389,7 +407,7 @@ export default function EmployeeDetailPage() {
           <Input label="Date" type="date" defaultValue={new Date().toISOString().split('T')[0]} />
           <Select
             label="Project"
-            options={mockProjects.map(p => ({ value: p.id, label: p.name }))}
+            options={projects.map((p: Project) => ({ value: p.id, label: p.name }))}
             placeholder="Select project"
           />
           <div className="grid grid-cols-2 gap-4">

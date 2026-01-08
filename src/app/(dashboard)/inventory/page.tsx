@@ -1,9 +1,11 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useState } from 'react';
 import { Card, CardHeader, Button, Badge, Input, Select, Tabs, Table, Modal, ModalFooter, Progress, EmptyState, Textarea } from '@/components/ui';
 import { cn, formatCurrency, formatDate } from '@/lib/utils';
-import { mockInventoryItems, mockOrders } from '@/data';
+import { useInventory, useOrders } from '@/hooks/data-hooks';
 import { STOCK_STATUS_COLORS, ORDER_STATUS_COLORS, InventoryItem, Order } from '@/types';
 import {
   Plus,
@@ -32,10 +34,15 @@ export default function InventoryPage() {
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
+  const { data: inventoryItems = [], isLoading: inventoryLoading } = useInventory();
+  const { data: orders = [], isLoading: ordersLoading } = useOrders();
+
+  const isLoading = inventoryLoading || ordersLoading;
+
   const tabs = [
-    { id: 'inventory', label: 'Inventory', count: mockInventoryItems.length },
-    { id: 'orders', label: 'Orders', count: mockOrders.length },
-    { id: 'low-stock', label: 'Low Stock', count: mockInventoryItems.filter(i => i.stockStatus === 'low-stock' || i.stockStatus === 'out-of-stock').length },
+    { id: 'inventory', label: 'Inventory', count: (inventoryItems || []).length },
+    { id: 'orders', label: 'Orders', count: (orders || []).length },
+    { id: 'low-stock', label: 'Low Stock', count: (inventoryItems || []).filter((i: InventoryItem) => i.stockStatus === 'low-stock' || i.stockStatus === 'out-of-stock').length },
   ];
 
   const categoryOptions = [
@@ -56,7 +63,7 @@ export default function InventoryPage() {
     { value: 'ordered', label: 'On Order' },
   ];
 
-  const filteredItems = mockInventoryItems.filter(item => {
+  const filteredItems = inventoryItems.filter((item: InventoryItem) => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.sku.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
@@ -64,13 +71,13 @@ export default function InventoryPage() {
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
-  const lowStockItems = mockInventoryItems.filter(i => i.stockStatus === 'low-stock' || i.stockStatus === 'out-of-stock');
+  const lowStockItems = (inventoryItems || []).filter((i: InventoryItem) => i.stockStatus === 'low-stock' || i.stockStatus === 'out-of-stock');
 
   // Stats
-  const totalItems = mockInventoryItems.length;
-  const totalValue = mockInventoryItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+  const totalItems = inventoryItems.length;
+  const totalValue = inventoryItems.reduce((sum: number, item: InventoryItem) => sum + (item.quantity * item.unitPrice), 0);
   const lowStockCount = lowStockItems.length;
-  const pendingOrders = mockOrders.filter(o => o.status === 'pending' || o.status === 'approved').length;
+  const pendingOrders = (orders || []).filter((o: Order) => o.status === 'pending' || o.status === 'approved').length;
 
   const inventoryColumns = [
     {
@@ -185,6 +192,10 @@ export default function InventoryPage() {
       ),
     },
   ];
+
+  if (isLoading) {
+    return <div>Loading inventory data...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -316,9 +327,9 @@ export default function InventoryPage() {
             </Button>
           </div>
 
-          {mockOrders.length > 0 ? (
+          {orders.length > 0 ? (
             <Card className="p-0 overflow-hidden">
-              <Table columns={orderColumns} data={mockOrders} />
+              <Table columns={orderColumns} data={orders} />
             </Card>
           ) : (
             <EmptyState
@@ -340,7 +351,7 @@ export default function InventoryPage() {
         <div className="space-y-4">
           {lowStockItems.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {lowStockItems.map(item => (
+              {lowStockItems.map((item: InventoryItem) => (
                 <Card key={item.id} className="border-l-4 border-l-red-500">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
@@ -471,7 +482,7 @@ export default function InventoryPage() {
           ) : (
             <Select
               label="Item"
-              options={mockInventoryItems.map(i => ({ value: i.id, label: i.name }))}
+              options={inventoryItems.map((i: InventoryItem) => ({ value: i.id, label: i.name }))}
               placeholder="Select item to order"
             />
           )}

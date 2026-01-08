@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Card, CardHeader, Button, Badge, Input, Select, Progress, Avatar, Tabs, Modal, ModalFooter, Textarea } from '@/components/ui';
 import { cn, formatCurrency, formatDate, formatRelativeTime } from '@/lib/utils';
-import { mockProjects, mockTasks, mockEmployees } from '@/data';
-import { PROJECT_STATUS_COLORS, TASK_STATUS_COLORS, PRIORITY_COLORS, Task, TaskStatus } from '@/types';
+import { useProjects, useTasks, useEmployees } from '@/hooks/data-hooks';
+import { PROJECT_STATUS_COLORS, TASK_STATUS_COLORS, PRIORITY_COLORS, Task, TaskStatus, Project } from '@/types';
 import {
   ArrowLeft,
   Plus,
@@ -27,12 +27,30 @@ import {
 export default function ProjectDetailPage() {
   const params = useParams();
   const projectId = params.id as string;
-  const project = mockProjects.find(p => p.id === projectId);
-  const tasks = mockTasks.filter(t => t.projectId === projectId);
+
+  const { data: projects = [], isLoading: projectsLoading } = useProjects();
+  const { data: allTasks = [], isLoading: tasksLoading } = useTasks();
+  const { data: employees = [], isLoading: employeesLoading } = useEmployees();
+
+  const isLoading = projectsLoading || tasksLoading || employeesLoading;
+
+  const project = projects.find((p: Project) => p.id === projectId);
+  const tasks = allTasks.filter((t: Task) => t.projectId === projectId);
   
   const [activeTab, setActiveTab] = useState('overview');
   const [showNewTaskModal, setShowNewTaskModal] = useState(false);
   const [taskFilter, setTaskFilter] = useState<string>('all');
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-surface-500">Loading project details...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!project) {
     return (
@@ -45,7 +63,7 @@ export default function ProjectDetailPage() {
     );
   }
 
-  const filteredTasks = tasks.filter(t => taskFilter === 'all' || t.status === taskFilter);
+  const filteredTasks = tasks.filter((t: Task) => taskFilter === 'all' || t.status === taskFilter);
 
   const tabs = [
     { id: 'overview', label: 'Overview' },
@@ -89,10 +107,10 @@ export default function ProjectDetailPage() {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-2xl font-bold text-surface-900 dark:text-white">{project.name}</h1>
-            <Badge variant="custom" className={PROJECT_STATUS_COLORS[project.status]}>
+            <Badge variant="custom" className={PROJECT_STATUS_COLORS[project.status as keyof typeof PROJECT_STATUS_COLORS]}>
               {project.status.replace('-', ' ')}
             </Badge>
-            <Badge variant="custom" className={PRIORITY_COLORS[project.priority]}>
+            <Badge variant="custom" className={PRIORITY_COLORS[project.priority as keyof typeof PRIORITY_COLORS]}>
               {project.priority}
             </Badge>
           </div>
@@ -175,7 +193,7 @@ export default function ProjectDetailPage() {
                 }
               />
               <div className="space-y-3">
-                {tasks.slice(0, 5).map(task => (
+                {tasks.slice(0, 5).map((task: Task) => (
                   <div key={task.id} className="flex items-center gap-3 p-3 rounded-lg bg-surface-50 dark:bg-surface-800/50">
                     {getTaskIcon(task.status)}
                     <div className="flex-1 min-w-0">
@@ -259,7 +277,7 @@ export default function ProjectDetailPage() {
           </div>
 
           <div className="space-y-3">
-            {filteredTasks.map(task => (
+            {filteredTasks.map((task: Task) => (
               <Card key={task.id} className="hover:shadow-md transition-shadow">
                 <div className="flex items-start gap-4">
                   {getTaskIcon(task.status)}
@@ -313,7 +331,7 @@ export default function ProjectDetailPage() {
         <Card>
           <CardHeader title="Team Members" description={`${project.teamSize} members assigned to this project`} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {mockEmployees.slice(0, 6).map(employee => (
+            {employees.slice(0, 6).map((employee: any) => (
               <div key={employee.id} className="flex items-center gap-3 p-4 rounded-lg bg-surface-50 dark:bg-surface-800/50">
                 <Avatar src={employee.avatar} name={employee.name} size="lg" />
                 <div>
@@ -364,7 +382,7 @@ export default function ProjectDetailPage() {
                 { name: 'Labor', spent: project.spent * 0.35, budget: project.budget * 0.3 },
                 { name: 'Equipment', spent: project.spent * 0.15, budget: project.budget * 0.2 },
                 { name: 'Other', spent: project.spent * 0.1, budget: project.budget * 0.15 },
-              ].map(category => (
+              ].map((category: { name: string; spent: number; budget: number }) => (
                 <div key={category.name}>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-surface-700 dark:text-surface-300">{category.name}</span>
@@ -401,7 +419,7 @@ export default function ProjectDetailPage() {
             />
             <Select
               label="Assignee"
-              options={mockEmployees.map(e => ({ value: e.id, label: e.name }))}
+              options={employees.map((e: any) => ({ value: e.id, label: e.name }))}
               placeholder="Select assignee"
             />
           </div>
