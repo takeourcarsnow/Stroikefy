@@ -107,11 +107,14 @@ export default function WorkforcePage() {
     {
       key: 'hourlyRate',
       header: 'Rate',
-      render: (employee: Employee) => (
-        <span className="font-medium text-surface-900 dark:text-white">
-          {formatCurrency(employee.hourlyRate)}/hr
-        </span>
-      ),
+      render: (employee: Employee) => {
+        const hourlyRate = employee.salary / 2080;
+        return (
+          <span className="font-medium text-surface-900 dark:text-white">
+            {formatCurrency(hourlyRate)}/hr
+          </span>
+        );
+      },
     },
     {
       key: 'hireDate',
@@ -138,7 +141,7 @@ export default function WorkforcePage() {
 
   // Stats
   const activeCount = mockEmployees.filter(e => e.status === 'active').length;
-  const onLeaveCount = mockEmployees.filter(e => e.status === 'on-leave' || e.status === 'sick').length;
+  const onLeaveCount = mockEmployees.filter(e => e.status === 'on-leave').length;
   const totalHours = mockTimeEntries.reduce((sum, entry) => sum + entry.totalHours, 0);
 
   return (
@@ -249,7 +252,7 @@ export default function WorkforcePage() {
       {/* Employees List/Grid */}
       {filteredEmployees.length === 0 ? (
         <EmptyState
-          icon={User}
+          icon={<User />}
           title="No employees found"
           description="Try adjusting your search or filters"
         />
@@ -286,7 +289,7 @@ export default function WorkforcePage() {
                   </div>
                   <div className="flex items-center justify-center gap-2 text-sm text-surface-500">
                     <DollarSign className="h-4 w-4" />
-                    <span>{formatCurrency(employee.hourlyRate)}/hr</span>
+                    <span>{formatCurrency(employee.salary / 2080)}/hr</span>
                   </div>
                 </div>
 

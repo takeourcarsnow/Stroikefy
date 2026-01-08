@@ -10,6 +10,7 @@ export const useDashboardStats = () => {
   return useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const [projectsRes, employeesRes, tasksRes, expensesRes] = await Promise.all([
         supabase.from('projects').select('status, budget, spent, progress'),
         supabase.from('employees').select('status'),
@@ -53,6 +54,7 @@ export const useRecentProjects = () => {
   return useQuery({
     queryKey: ['recent-projects'],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('projects')
         .select('*')
@@ -70,6 +72,7 @@ export const useRecentTasks = () => {
   return useQuery({
     queryKey: ['recent-tasks'],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('tasks')
         .select(`
@@ -90,6 +93,7 @@ export const useMonthlyRevenue = () => {
   return useQuery({
     queryKey: ['monthly-revenue'],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('invoices')
         .select('total, paid_date, type')
@@ -99,11 +103,11 @@ export const useMonthlyRevenue = () => {
 
       if (error) throw error;
 
-      const monthlyData = (data || []).reduce((acc, invoice) => {
+      const monthlyData = (data || []).reduce((acc: Record<string, number>, invoice) => {
         const month = new Date(invoice.paid_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
         acc[month] = (acc[month] || 0) + invoice.total;
         return acc;
-      }, {});
+      }, {} as Record<string, number>);
 
       return Object.entries(monthlyData).map(([month, revenue]) => ({
         month,
@@ -118,16 +122,17 @@ export const useProjectStatusDistribution = () => {
   return useQuery({
     queryKey: ['project-status-distribution'],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('projects')
         .select('status');
 
       if (error) throw error;
 
-      const statusCounts = (data || []).reduce((acc, project) => {
+      const statusCounts = (data || []).reduce((acc: Record<string, number>, project) => {
         acc[project.status] = (acc[project.status] || 0) + 1;
         return acc;
-      }, {});
+      }, {} as Record<string, number>);
 
       return Object.entries(statusCounts).map(([status, count]) => ({
         status,
@@ -146,6 +151,7 @@ export const useProjects = (filters?: { status?: string; priority?: string }) =>
   return useQuery({
     queryKey: ['projects', filters],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       let query = supabase.from('projects').select('*');
 
       if (filters?.status) {
@@ -168,6 +174,7 @@ export const useProject = (id: string) => {
   return useQuery({
     queryKey: ['project', id],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('projects')
         .select('*')
@@ -186,6 +193,7 @@ export const useProjectTasks = (projectId: string) => {
   return useQuery({
     queryKey: ['project-tasks', projectId],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('tasks')
         .select('*')
@@ -204,6 +212,7 @@ export const useProjectEmployees = (projectId: string) => {
   return useQuery({
     queryKey: ['project-employees', projectId],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('employee_projects')
         .select(`
@@ -224,6 +233,7 @@ export const useCreateProject = () => {
 
   return useMutation({
     mutationFn: async (project: any) => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('projects')
         .insert([project])
@@ -244,7 +254,7 @@ export const useUpdateProject = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, ...updates }: any) => {
+    mutationFn: async ({ id, ...updates }: any) => {      if (!supabase) throw new Error('Supabase is not configured');      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('projects')
         .update(updates)
@@ -271,6 +281,7 @@ export const useEmployees = (filters?: { status?: string; department?: string })
   return useQuery({
     queryKey: ['employees', filters],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       let query = supabase.from('employees').select('*');
 
       if (filters?.status) {
@@ -293,6 +304,7 @@ export const useEmployee = (id: string) => {
   return useQuery({
     queryKey: ['employee', id],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('employees')
         .select('*')
@@ -311,6 +323,7 @@ export const useEmployeeProjects = (employeeId: string) => {
   return useQuery({
     queryKey: ['employee-projects', employeeId],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('employee_projects')
         .select(`
@@ -330,6 +343,7 @@ export const useEmployeeTimeEntries = (employeeId: string, dateRange?: { start: 
   return useQuery({
     queryKey: ['employee-time-entries', employeeId, dateRange],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       let query = supabase
         .from('time_entries')
         .select('*')
@@ -354,8 +368,7 @@ export const useEmployeeTimeEntries = (employeeId: string, dateRange?: { start: 
 export const useAttendance = (date?: string) => {
   return useQuery({
     queryKey: ['attendance', date],
-    queryFn: async () => {
-      let query = supabase
+    queryFn: async () => {      if (!supabase) throw new Error('Supabase is not configured');      let query = supabase
         .from('attendance')
         .select(`
           *,
@@ -380,6 +393,7 @@ export const useCreateTimeEntry = () => {
 
   return useMutation({
     mutationFn: async (timeEntry: any) => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('time_entries')
         .insert([timeEntry])
@@ -401,6 +415,7 @@ export const useCreateAttendance = () => {
 
   return useMutation({
     mutationFn: async (attendance: any) => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('attendance')
         .insert([attendance])
@@ -424,6 +439,7 @@ export const useInvoices = (filters?: { status?: string; type?: string }) => {
   return useQuery({
     queryKey: ['invoices', filters],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       let query = supabase
         .from('invoices')
         .select(`
@@ -450,8 +466,7 @@ export const useInvoices = (filters?: { status?: string; type?: string }) => {
 export const useExpenses = (filters?: { status?: string; category?: string }) => {
   return useQuery({
     queryKey: ['expenses', filters],
-    queryFn: async () => {
-      let query = supabase.from('expenses').select('*');
+    queryFn: async () => {      if (!supabase) throw new Error('Supabase is not configured');      let query = supabase.from('expenses').select('*');
 
       if (filters?.status) {
         query = query.eq('status', filters.status);
@@ -473,6 +488,7 @@ export const useBudgets = () => {
   return useQuery({
     queryKey: ['budgets'],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('budgets')
         .select(`
@@ -493,6 +509,7 @@ export const useCreateInvoice = () => {
 
   return useMutation({
     mutationFn: async (invoice: any) => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('invoices')
         .insert([invoice])
@@ -514,6 +531,7 @@ export const useCreateExpense = () => {
 
   return useMutation({
     mutationFn: async (expense: any) => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('expenses')
         .insert([expense])
@@ -538,6 +556,7 @@ export const useInventory = (filters?: { category?: string; stock_status?: strin
   return useQuery({
     queryKey: ['inventory', filters],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       let query = supabase.from('inventory_items').select('*');
 
       if (filters?.category) {
@@ -559,8 +578,7 @@ export const useInventory = (filters?: { category?: string; stock_status?: strin
 export const useOrders = (filters?: { status?: string }) => {
   return useQuery({
     queryKey: ['orders', filters],
-    queryFn: async () => {
-      let query = supabase
+    queryFn: async () => {      if (!supabase) throw new Error('Supabase is not configured');      let query = supabase
         .from('orders')
         .select(`
           *,
@@ -583,8 +601,7 @@ export const useOrders = (filters?: { status?: string }) => {
 export const useStockMovements = (itemId?: string) => {
   return useQuery({
     queryKey: ['stock-movements', itemId],
-    queryFn: async () => {
-      let query = supabase
+    queryFn: async () => {      if (!supabase) throw new Error('Supabase is not configured');      let query = supabase
         .from('stock_movements')
         .select('*')
         .order('created_at', { ascending: false });
@@ -607,6 +624,7 @@ export const useCreateOrder = () => {
 
   return useMutation({
     mutationFn: async (order: any) => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('orders')
         .insert([order])
@@ -628,6 +646,7 @@ export const useUpdateInventory = () => {
 
   return useMutation({
     mutationFn: async ({ id, ...updates }: any) => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('inventory_items')
         .update(updates)
@@ -652,6 +671,7 @@ export const useFolders = () => {
   return useQuery({
     queryKey: ['folders'],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('folders')
         .select('*')
@@ -668,6 +688,7 @@ export const useDocuments = (filters?: { folder_id?: string; project_id?: string
   return useQuery({
     queryKey: ['documents', filters],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       let query = supabase
         .from('documents')
         .select(`
@@ -700,6 +721,7 @@ export const useCreateDocument = () => {
 
   return useMutation({
     mutationFn: async (document: any) => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('documents')
         .insert([document])
@@ -724,6 +746,7 @@ export const useTimeEntries = (filters?: { employee_id?: string; project_id?: st
   return useQuery({
     queryKey: ['time-entries', filters],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       let query = supabase
         .from('time_entries')
         .select(`
@@ -758,6 +781,7 @@ export const useTasks = (filters?: { project_id?: string; status?: string; assig
   return useQuery({
     queryKey: ['tasks', filters],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       let query = supabase
         .from('tasks')
         .select(`
@@ -790,6 +814,7 @@ export const useCreateTask = () => {
 
   return useMutation({
     mutationFn: async (task: any) => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('tasks')
         .insert([task])
@@ -812,6 +837,7 @@ export const useUpdateTask = () => {
 
   return useMutation({
     mutationFn: async ({ id, ...updates }: any) => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('tasks')
         .update(updates)
@@ -838,6 +864,7 @@ export const useUsers = () => {
   return useQuery({
     queryKey: ['users'],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('users')
         .select('*')
@@ -854,6 +881,7 @@ export const useUser = (id: string) => {
   return useQuery({
     queryKey: ['user', id],
     queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
       const { data, error } = await supabase
         .from('users')
         .select('*')
@@ -872,8 +900,7 @@ export const useUpdateUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, ...updates }: any) => {
-      const { data, error } = await supabase
+    mutationFn: async ({ id, ...updates }: any) => {      if (!supabase) throw new Error('Supabase is not configured');      const { data, error } = await supabase
         .from('users')
         .update(updates)
         .eq('id', id)

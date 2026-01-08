@@ -86,11 +86,11 @@ export default function TimeTrackingPage() {
 
   // Stats
   const totalHoursToday = mockTimeEntries
-    .filter(e => e.date === selectedDate)
+    .filter(e => e.date.toISOString().split('T')[0] === selectedDate)
     .reduce((sum, e) => sum + e.totalHours, 0);
 
   const totalHoursWeek = mockTimeEntries.reduce((sum, e) => sum + e.totalHours, 0);
-  const totalOvertimeWeek = mockTimeEntries.reduce((sum, e) => sum + e.overtimeHours, 0);
+  const totalOvertimeWeek = mockTimeEntries.reduce((sum, e) => sum + Math.max(0, e.totalHours - 8), 0);
   const pendingApproval = mockTimeEntries.filter(e => e.status === 'pending').length;
 
   // Weekly chart data
@@ -129,7 +129,7 @@ export default function TimeTrackingPage() {
     {
       key: 'time',
       header: 'Time',
-      render: (entry: TimeEntry) => `${entry.clockIn} - ${entry.clockOut || 'Active'}`,
+      render: (entry: TimeEntry) => `${entry.startTime} - ${entry.endTime || 'Active'}`,
     },
     {
       key: 'hours',
@@ -137,8 +137,8 @@ export default function TimeTrackingPage() {
       render: (entry: TimeEntry) => (
         <div>
           <span className="font-medium">{entry.totalHours}h</span>
-          {entry.overtimeHours > 0 && (
-            <span className="text-orange-600 ml-2">(+{entry.overtimeHours}h OT)</span>
+          {entry.totalHours > 8 && (
+            <span className="text-orange-600 ml-2">(+{(entry.totalHours - 8).toFixed(1)}h OT)</span>
           )}
         </div>
       ),

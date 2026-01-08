@@ -9,8 +9,8 @@ export interface ExcelImportResult<T> {
 
 export function parseExcelFile<T>(
   file: File,
-  mapRow: (row: Record<string, unknown>, index: number) => T | null,
-  validateRow?: (row: Record<string, unknown>, index: number) => string | null
+  mapRow: (row: Record<string, unknown>, index?: number) => T | null,
+  validateRow?: (row: Record<string, unknown>, index?: number) => string | null
 ): Promise<ExcelImportResult<T>> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

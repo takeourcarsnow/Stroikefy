@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 import { Card, CardHeader, Button, Badge, Input, Select, Avatar, Tabs, Progress, Modal, ModalFooter, Table } from '@/components/ui';
 import { cn, formatDate, formatCurrency, formatRelativeTime } from '@/lib/utils';
 import { mockEmployees, mockTimeEntries, mockProjects } from '@/data';
-import { EMPLOYEE_STATUS_COLORS, TimeEntry } from '@/types';
+import { EMPLOYEE_STATUS_COLORS, TimeEntry, PROJECT_STATUS_COLORS } from '@/types';
 import {
   ArrowLeft,
   Edit,
@@ -52,8 +52,9 @@ export default function EmployeeDetailPage() {
   ];
 
   const totalHoursWorked = timeEntries.reduce((sum, entry) => sum + entry.totalHours, 0);
-  const totalOvertimeHours = timeEntries.reduce((sum, entry) => sum + entry.overtimeHours, 0);
-  const totalEarnings = totalHoursWorked * employee.hourlyRate;
+  const totalOvertimeHours = timeEntries.reduce((sum, entry) => sum + Math.max(0, entry.totalHours - 8), 0);
+  const hourlyRate = employee.salary / 2080;
+  const totalEarnings = totalHoursWorked * hourlyRate;
   const employeeProjects = mockProjects.filter(p => 
     p.managerId === employeeId || Math.random() > 0.5
   ).slice(0, 4);
@@ -75,12 +76,12 @@ export default function EmployeeDetailPage() {
     {
       key: 'clockIn',
       header: 'Clock In',
-      render: (entry: TimeEntry) => entry.clockIn,
+      render: (entry: TimeEntry) => entry.startTime,
     },
     {
       key: 'clockOut',
       header: 'Clock Out',
-      render: (entry: TimeEntry) => entry.clockOut || '-',
+      render: (entry: TimeEntry) => entry.endTime || '-',
     },
     {
       key: 'hours',
@@ -90,13 +91,13 @@ export default function EmployeeDetailPage() {
     {
       key: 'overtime',
       header: 'Overtime',
-      render: (entry: TimeEntry) => entry.overtimeHours > 0 ? `${entry.overtimeHours}h` : '-',
+      render: (entry: TimeEntry) => entry.totalHours > 8 ? `${(entry.totalHours - 8).toFixed(1)}h` : '-',
     },
     {
       key: 'status',
       header: 'Status',
       render: (entry: TimeEntry) => (
-        <Badge variant={entry.status === 'approved' ? 'success' : entry.status === 'pending' ? 'warning' : 'secondary'}>
+        <Badge variant={entry.status === 'approved' ? 'success' : entry.status === 'pending' ? 'warning' : 'danger'}>
           {entry.status}
         </Badge>
       ),
@@ -115,7 +116,7 @@ export default function EmployeeDetailPage() {
       <div className="flex flex-col lg:flex-row gap-6">
         <Card className="flex-1">
           <div className="flex flex-col sm:flex-row items-start gap-6">
-            <Avatar src={employee.avatar} name={employee.name} size="2xl" />
+            <Avatar src={employee.avatar} name={employee.name} size="xl" />
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-2">
                 <h1 className="text-2xl font-bold text-surface-900 dark:text-white">{employee.name}</h1>
@@ -216,7 +217,7 @@ export default function EmployeeDetailPage() {
                       </div>
                       <div className="text-right">
                         <p className="font-medium text-surface-900 dark:text-white">{entry.totalHours}h</p>
-                        <p className="text-sm text-surface-500">{entry.clockIn} - {entry.clockOut}</p>
+                        <p className="text-sm text-surface-500">{entry.startTime} - {entry.endTime || 'Active'}</p>
                       </div>
                     </div>
                   );
@@ -269,7 +270,7 @@ export default function EmployeeDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm text-surface-500 mb-1">Hourly Rate</p>
-                  <p className="font-medium text-surface-900 dark:text-white">{formatCurrency(employee.hourlyRate)}/hr</p>
+                  <p className="font-medium text-surface-900 dark:text-white">{formatCurrency(hourlyRate)}/hr</p>
                 </div>
                 <div>
                   <p className="text-sm text-surface-500 mb-1">Emergency Contact</p>
@@ -281,7 +282,7 @@ export default function EmployeeDetailPage() {
                     <p className="text-sm text-surface-500 mb-2">Certifications</p>
                     <div className="flex flex-wrap gap-2">
                       {employee.certifications.map((cert, index) => (
-                        <Badge key={index} variant="secondary">{cert}</Badge>
+                        <Badge key={index} variant="default">{cert}</Badge>
                       ))}
                     </div>
                   </div>
@@ -291,7 +292,7 @@ export default function EmployeeDetailPage() {
                     <p className="text-sm text-surface-500 mb-2">Skills</p>
                     <div className="flex flex-wrap gap-2">
                       {employee.skills.map((skill, index) => (
-                        <Badge key={index} variant="outline">{skill}</Badge>
+                        <Badge key={index} variant="default">{skill}</Badge>
                       ))}
                     </div>
                   </div>
@@ -308,7 +309,7 @@ export default function EmployeeDetailPage() {
                   return (
                     <div key={day} className="flex items-center justify-between">
                       <span className="text-surface-600 dark:text-surface-400">{day}</span>
-                      <Badge variant={hasEntry ? 'success' : 'secondary'}>
+                      <Badge variant={hasEntry ? 'success' : 'default'}>
                         {hasEntry ? `${7 + index}h` : 'No entry'}
                       </Badge>
                     </div>
@@ -348,7 +349,7 @@ export default function EmployeeDetailPage() {
                   </Link>
                   <p className="text-surface-500">{project.clientName}</p>
                 </div>
-                <Badge variant={project.status === 'in-progress' ? 'primary' : 'secondary'}>
+                <Badge variant="default" className={PROJECT_STATUS_COLORS[project.status]}>
                   {project.status}
                 </Badge>
               </div>

@@ -35,7 +35,7 @@ export default function InventoryPage() {
   const tabs = [
     { id: 'inventory', label: 'Inventory', count: mockInventoryItems.length },
     { id: 'orders', label: 'Orders', count: mockOrders.length },
-    { id: 'low-stock', label: 'Low Stock', count: mockInventoryItems.filter(i => i.status === 'low-stock' || i.status === 'out-of-stock').length },
+    { id: 'low-stock', label: 'Low Stock', count: mockInventoryItems.filter(i => i.stockStatus === 'low-stock' || i.stockStatus === 'out-of-stock').length },
   ];
 
   const categoryOptions = [
@@ -53,24 +53,24 @@ export default function InventoryPage() {
     { value: 'in-stock', label: 'In Stock' },
     { value: 'low-stock', label: 'Low Stock' },
     { value: 'out-of-stock', label: 'Out of Stock' },
-    { value: 'on-order', label: 'On Order' },
+    { value: 'ordered', label: 'On Order' },
   ];
 
   const filteredItems = mockInventoryItems.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.sku.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
-    const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+    const matchesStatus = statusFilter === 'all' || item.stockStatus === statusFilter;
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
-  const lowStockItems = mockInventoryItems.filter(i => i.status === 'low-stock' || i.status === 'out-of-stock');
+  const lowStockItems = mockInventoryItems.filter(i => i.stockStatus === 'low-stock' || i.stockStatus === 'out-of-stock');
 
   // Stats
   const totalItems = mockInventoryItems.length;
   const totalValue = mockInventoryItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
   const lowStockCount = lowStockItems.length;
-  const pendingOrders = mockOrders.filter(o => o.status === 'pending' || o.status === 'processing').length;
+  const pendingOrders = mockOrders.filter(o => o.status === 'pending' || o.status === 'approved').length;
 
   const inventoryColumns = [
     {
@@ -92,7 +92,7 @@ export default function InventoryPage() {
       key: 'category',
       header: 'Category',
       render: (item: InventoryItem) => (
-        <Badge variant="outline">{item.category}</Badge>
+        <Badge variant="default">{item.category}</Badge>
       ),
     },
     {
@@ -158,17 +158,17 @@ export default function InventoryPage() {
     {
       key: 'supplier',
       header: 'Supplier',
-      render: (order: Order) => order.supplierName,
+      render: (order: Order) => order.supplier,
     },
     {
       key: 'total',
       header: 'Total',
-      render: (order: Order) => formatCurrency(order.totalAmount),
+      render: (order: Order) => formatCurrency(order.total),
     },
     {
       key: 'orderDate',
       header: 'Order Date',
-      render: (order: Order) => formatDate(order.orderDate),
+      render: (order: Order) => (order.orderDate ? formatDate(order.orderDate) : '-'),
     },
     {
       key: 'expectedDelivery',
@@ -294,7 +294,7 @@ export default function InventoryPage() {
             </Card>
           ) : (
             <EmptyState
-              icon={Package}
+              icon={<Package />}
               title="No items found"
               description="Try adjusting your search or add new inventory items"
               action={
@@ -322,7 +322,7 @@ export default function InventoryPage() {
             </Card>
           ) : (
             <EmptyState
-              icon={ShoppingCart}
+              icon={<ShoppingCart />}
               title="No orders yet"
               description="Create your first order to restock inventory"
               action={
