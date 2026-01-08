@@ -17,11 +17,18 @@ interface AuthStore {
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
-      // Start with no user - authentication required
-      user: null,
-      isAuthenticated: false,
+      // Start with demo user for development
+      user: {
+        id: 'demo-user',
+        name: 'Demo User',
+        email: 'demo@stroikefy.com',
+        role: 'admin',
+        avatar: '',
+        createdAt: new Date(),
+      },
+      isAuthenticated: true,
       isLoading: false,
-      permissions: null,
+      permissions: ROLE_PERMISSIONS.admin,
       
       login: async (email: string, _password: string) => {
         set({ isLoading: true });

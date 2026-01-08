@@ -168,7 +168,23 @@ export const useProjects = (filters?: { status?: string; priority?: string }, op
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      
+      // Transform data to match TypeScript interfaces
+      return (data || []).map(project => ({
+        ...project,
+        startDate: project.start_date ? new Date(project.start_date) : null,
+        endDate: project.end_date ? new Date(project.end_date) : null,
+        managerId: project.manager_id,
+        managerName: project.manager_name,
+        location: {
+          address: project.location_address,
+          city: project.location_city,
+          lat: project.location_lat,
+          lng: project.location_lng,
+        },
+        createdAt: new Date(project.created_at),
+        updatedAt: new Date(project.updated_at),
+      }));
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -186,7 +202,23 @@ export const useProject = (id: string) => {
         .single();
 
       if (error) throw error;
-      return data;
+      
+      // Transform data to match TypeScript interfaces
+      return {
+        ...data,
+        startDate: data.start_date ? new Date(data.start_date) : null,
+        endDate: data.end_date ? new Date(data.end_date) : null,
+        managerId: data.manager_id,
+        managerName: data.manager_name,
+        location: {
+          address: data.location_address,
+          city: data.location_city,
+          lat: data.location_lat,
+          lng: data.location_lng,
+        },
+        createdAt: new Date(data.created_at),
+        updatedAt: new Date(data.updated_at),
+      };
     },
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
@@ -298,7 +330,27 @@ export const useEmployees = (filters?: { status?: string; department?: string },
       const { data, error } = await query.order('hire_date', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      
+      // Transform data to match TypeScript interfaces
+      return (data || []).map(employee => ({
+        ...employee,
+        employeeId: employee.employee_id,
+        hireDate: employee.hire_date ? new Date(employee.hire_date) : null,
+        projectIds: [], // This would need to be fetched separately or joined
+        emergencyContact: employee.emergency_contact_name ? {
+          name: employee.emergency_contact_name,
+          phone: employee.emergency_contact_phone,
+          relationship: employee.emergency_contact_relationship,
+        } : undefined,
+        address: employee.address_street ? {
+          street: employee.address_street,
+          city: employee.address_city,
+          state: employee.address_state,
+          zip: employee.address_zip,
+        } : undefined,
+        createdAt: new Date(employee.created_at),
+        updatedAt: new Date(employee.updated_at),
+      }));
     },
     enabled: options?.enabled ?? true,
     staleTime: 5 * 60 * 1000,
@@ -317,7 +369,27 @@ export const useEmployee = (id: string) => {
         .single();
 
       if (error) throw error;
-      return data;
+      
+      // Transform data to match TypeScript interfaces
+      return {
+        ...data,
+        employeeId: data.employee_id,
+        hireDate: data.hire_date ? new Date(data.hire_date) : null,
+        projectIds: [], // This would need to be fetched separately
+        emergencyContact: data.emergency_contact_name ? {
+          name: data.emergency_contact_name,
+          phone: data.emergency_contact_phone,
+          relationship: data.emergency_contact_relationship,
+        } : undefined,
+        address: data.address_street ? {
+          street: data.address_street,
+          city: data.address_city,
+          state: data.address_state,
+          zip: data.address_zip,
+        } : undefined,
+        createdAt: new Date(data.created_at),
+        updatedAt: new Date(data.updated_at),
+      };
     },
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
@@ -575,7 +647,20 @@ export const useInventory = (filters?: { category?: string; stock_status?: strin
       const { data, error } = await query.order('name', { ascending: true });
 
       if (error) throw error;
-      return data || [];
+      
+      // Transform data to match TypeScript interfaces
+      return (data || []).map(item => ({
+        ...item,
+        minQuantity: item.min_quantity,
+        maxQuantity: item.max_quantity,
+        unitPrice: item.unit_price,
+        totalValue: item.total_value,
+        supplierContact: item.supplier_contact,
+        lastRestocked: item.last_restocked ? new Date(item.last_restocked) : undefined,
+        stockStatus: item.stock_status,
+        createdAt: new Date(item.created_at),
+        updatedAt: new Date(item.updated_at),
+      }));
     },
     enabled: options?.enabled ?? true,
     staleTime: 5 * 60 * 1000,
@@ -778,7 +863,15 @@ export const useTimeEntries = (filters?: { employee_id?: string; project_id?: st
       const { data, error } = await query.order('date', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      
+      // Transform data to match TypeScript interfaces
+      return (data || []).map(entry => ({
+        ...entry,
+        date: new Date(entry.date),
+        employeeName: entry.employee_name,
+        projectName: entry.project_name,
+        taskName: entry.task_name,
+      }));
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -810,7 +903,15 @@ export const useTasks = (filters?: { project_id?: string; status?: string; assig
       const { data, error } = await query.order('due_date', { ascending: true });
 
       if (error) throw error;
-      return data || [];
+      
+      // Transform data to match TypeScript interfaces
+      return (data || []).map(task => ({
+        ...task,
+        dueDate: task.due_date ? new Date(task.due_date) : null,
+        assigneeName: task.assignee_name,
+        createdAt: new Date(task.created_at),
+        updatedAt: new Date(task.updated_at),
+      }));
     },
     staleTime: 5 * 60 * 1000,
   });
