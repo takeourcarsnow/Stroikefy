@@ -534,7 +534,20 @@ export const useInvoices = (filters?: { status?: string; type?: string }, option
       const { data, error } = await query.order('issue_date', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      
+      // Transform data to match TypeScript interfaces
+      return (data || []).map(invoice => ({
+        ...invoice,
+        invoiceNumber: invoice.invoice_number,
+        projectName: invoice.project_name,
+        clientEmail: invoice.client_email,
+        clientAddress: invoice.client_address,
+        issueDate: invoice.issue_date ? new Date(invoice.issue_date) : null,
+        dueDate: invoice.due_date ? new Date(invoice.due_date) : null,
+        paidDate: invoice.paid_date ? new Date(invoice.paid_date) : null,
+        createdAt: new Date(invoice.created_at),
+        updatedAt: new Date(invoice.updated_at),
+      }));
     },
     enabled: options?.enabled ?? true,
     staleTime: 5 * 60 * 1000,
