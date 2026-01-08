@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { isSupabaseConfigured } from '@/lib/supabase';
 
 // Data source types
@@ -17,7 +17,16 @@ const DataSourceContext = createContext<DataSourceContextType | undefined>(undef
 // Provider component
 export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
   const [dataSource, setDataSource] = useState<DataSource>('demo'); // Default to demo for development
-  const [isSupabaseAvailable, setSupabaseAvailable] = useState(isSupabaseConfigured());
+  const [isSupabaseAvailable, setSupabaseAvailable] = useState(false);
+
+  useEffect(() => {
+    // Check Supabase availability asynchronously
+    const checkSupabase = async () => {
+      const available = await isSupabaseConfigured();
+      setSupabaseAvailable(available);
+    };
+    checkSupabase();
+  }, []);
 
   return (
     <DataSourceContext.Provider
@@ -55,11 +64,11 @@ export const useDataWithFallback = <T,>(
 
   const shouldUseSupabase = dataSource === 'supabase' && isSupabaseAvailable;
 
-  // Always call the Supabase hook, but disable it when not using Supabase
-  const supabaseResult = supabaseHook({ enabled: shouldUseSupabase });
+  // Only call the Supabase hook when using Supabase
+  const supabaseResult = shouldUseSupabase ? supabaseHook({ enabled: options?.enabled ?? true }) : null;
 
   // If using demo data or Supabase is not available, return demo data
-  if (!shouldUseSupabase) {
+  if (!shouldUseSupabase || !supabaseResult) {
     return {
       data: demoData,
       isLoading: false,

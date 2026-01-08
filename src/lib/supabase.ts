@@ -8,9 +8,19 @@ export const supabase = supabaseUrl && supabaseAnonKey
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
-// Helper to check if Supabase is configured
-export const isSupabaseConfigured = () => {
-  return Boolean(supabaseUrl && supabaseAnonKey && supabase);
+// Helper to check if Supabase is configured and user is authenticated
+export const isSupabaseConfigured = async () => {
+  if (!supabaseUrl || !supabaseAnonKey || !supabase) {
+    return false;
+  }
+  
+  try {
+    // Check if there's an authenticated session
+    const { data: { session } } = await supabase.auth.getSession();
+    return Boolean(session);
+  } catch {
+    return false;
+  }
 };
 
 // Database types (for when connected to Supabase)
