@@ -139,7 +139,7 @@ export default function MapPage() {
               />
               <MapContainer
                 center={selectedProject 
-                  ? [selectedProject.location.lat, selectedProject.location.lng] 
+                  ? [selectedProject.location.latitude, selectedProject.location.longitude] 
                   : defaultCenter
                 }
                 zoom={selectedProject ? 14 : 11}
@@ -153,7 +153,7 @@ export default function MapPage() {
                 {filteredProjects.map(project => (
                   <Marker
                     key={project.id}
-                    position={[project.location.lat, project.location.lng]}
+                    position={[project.location.latitude, project.location.longitude]}
                     eventHandlers={{
                       click: () => setSelectedProject(project),
                     }}

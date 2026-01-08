@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, Button, Badge, Input, Select, Modal, ModalFooter, Table } from '@/components/ui';
 import { cn, formatDate, formatCurrency } from '@/lib/utils';
 import { mockEmployees, mockProjects, mockTimeEntries } from '@/data';
-import { TimeEntry, TimeEntryStatus } from '@/types';
+import { TimeEntry } from '@/types';
 import {
   Play,
   Pause,

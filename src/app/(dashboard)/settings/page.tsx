@@ -95,7 +95,7 @@ export default function SettingsPage() {
                 <CardHeader title="Profile Information" description="Update your personal details" />
                 <div className="flex flex-col sm:flex-row gap-6 mb-6">
                   <div className="flex flex-col items-center gap-3">
-                    <Avatar name="John Doe" size="xl" />
+                    <Avatar name="John Doe" size="2xl" />
                     <Button variant="outline" size="sm">Change Photo</Button>
                   </div>
                   <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -319,7 +319,7 @@ export default function SettingsPage() {
                         <div>
                           <h4 className="font-medium text-surface-900 dark:text-white">
                             {session.device}
-                            {session.current && <Badge variant="success" className="ml-2">Current</Badge>}
+                            {session.current && <Badge variant="primary" className="ml-2">Current</Badge>}
                           </h4>
                           <p className="text-sm text-surface-500">{session.location}</p>
                         </div>

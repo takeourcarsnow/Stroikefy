@@ -63,22 +63,38 @@ export default function ImportExportPage() {
 
     setIsProcessing(true);
     try {
-      const mapper = (importType === 'employees' 
+      const data = await parseExcelFile(selectedFile);
+      
+      const result: ImportResult = {
+        success: 0,
+        failed: 0,
+        errors: [],
+        data: [],
+      };
+
+      const mapper = importType === 'employees' 
         ? mapEmployeeRow 
         : importType === 'inventory' 
         ? mapInventoryRow 
-        : mapTaskRow) as unknown as (row: Record<string, unknown>, index: number) => any;
+        : mapTaskRow;
 
-      const result = await parseExcelFile(selectedFile, mapper);
-      
-      const importResult: ImportResult = {
-        success: result.successRows,
-        failed: result.totalRows - result.successRows,
-        errors: result.errors,
-        data: result.data,
-      };
+      data.forEach((row, index) => {
+        try {
+          const mapped = mapper(row);
+          if (mapped) {
+            result.data.push(mapped);
+            result.success++;
+          } else {
+            result.failed++;
+            result.errors.push(`Row ${index + 2}: Invalid data`);
+          }
+        } catch (err: any) {
+          result.failed++;
+          result.errors.push(`Row ${index + 2}: ${err.message}`);
+        }
+      });
 
-      setImportResult(importResult);
+      setImportResult(result);
     } catch (err: any) {
       setImportResult({
         success: 0,
