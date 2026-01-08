@@ -61,10 +61,10 @@ export const useDataWithFallback = <T,>(
   // Always try to use Supabase
   const supabaseResult = supabaseHook({ enabled: options?.enabled ?? true });
 
-  // If Supabase is not available, return error state
+  // If Supabase is not available, return empty array
   if (!isSupabaseAvailable) {
     return {
-      data: null,
+      data: [],
       isLoading: false,
       error: new Error('Supabase is not configured'),
       isDemoData: false,
