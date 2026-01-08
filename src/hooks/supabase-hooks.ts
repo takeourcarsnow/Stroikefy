@@ -147,6 +147,150 @@ export const useProjectStatusDistribution = (options?: { enabled?: boolean }) =>
   });
 };
 
+// New: Task summaries for dashboard alerts
+export const useTaskSummary = (options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: ['task-summary'],
+    queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
+
+      const now = new Date();
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const dayOfWeek = (startOfToday.getDay() + 6) % 7; // Monday=0
+      const monday = new Date(startOfToday);
+      monday.setDate(startOfToday.getDate() - dayOfWeek);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+
+      const startOfWeekIso = monday.toISOString().split('T')[0];
+      const endOfWeekIso = sunday.toISOString().split('T')[0];
+      const startOfTodayIso = startOfToday.toISOString().split('T')[0];
+
+      const [dueRes, highRes, completedRes] = await Promise.all([
+        supabase.from('tasks').select('id').gte('due_date', startOfWeekIso).lte('due_date', endOfWeekIso),
+        supabase.from('tasks').select('id').gte('due_date', startOfWeekIso).lte('due_date', endOfWeekIso).in('priority', ['high', 'urgent']),
+        supabase.from('tasks').select('id').eq('status', 'completed').gte('updated_at', startOfTodayIso)
+      ]);
+
+      const tasksDueThisWeek = (dueRes.data || []).length;
+      const highPriorityThisWeek = (highRes.data || []).length;
+      const tasksCompletedToday = (completedRes.data || []).length;
+
+      return { tasksDueThisWeek, highPriorityThisWeek, tasksCompletedToday };
+    },
+    enabled: options?.enabled ?? true,
+    staleTime: 60 * 1000,
+  });
+};
+
+// New: Recent activity aggregation (tasks, invoices, orders, documents, time entries)
+export const useRecentActivity = (options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: ['recent-activity'],
+    queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
+
+      const [tasksRes, invoicesRes, ordersRes, docsRes, timeRes] = await Promise.all([
+        supabase.from('tasks').select('id, title, status, updated_at, assignee_name'),
+        supabase.from('invoices').select('id, invoice_number, status, updated_at, client_name'),
+        supabase.from('orders').select('id, order_number, status, order_date, requested_by'),
+        supabase.from('documents').select('id, name, file_type, created_at, uploaded_by_name'),
+        supabase.from('time_entries').select('id, employee_name, project_name, task_name, created_at')
+      ]);
+
+      const items: any[] = [];
+
+      (tasksRes.data || []).forEach((t: any) => {
+        items.push({
+          id: `task-${t.id}`,
+          user: t.assignee_name || 'Unknown',
+          action: t.status === 'completed' ? 'completed task' : 'updated task',
+          target: t.title,
+          created_at: t.updated_at
+        });
+      });
+
+      (invoicesRes.data || []).forEach((i: any) => {
+        items.push({
+          id: `inv-${i.id}`,
+          user: i.client_name || 'Client',
+          action: i.status === 'paid' ? 'paid invoice' : 'updated invoice',
+          target: i.invoice_number,
+          created_at: i.updated_at
+        });
+      });
+
+      (ordersRes.data || []).forEach((o: any) => {
+        items.push({
+          id: `ord-${o.id}`,
+          user: o.requested_by || 'Requester',
+          action: 'created order',
+          target: o.order_number,
+          created_at: o.order_date
+        });
+      });
+
+      (docsRes.data || []).forEach((d: any) => {
+        items.push({
+          id: `doc-${d.id}`,
+          user: d.uploaded_by_name || 'Uploader',
+          action: 'uploaded document',
+          target: d.name,
+          created_at: d.created_at
+        });
+      });
+
+      (timeRes.data || []).forEach((te: any) => {
+        items.push({
+          id: `time-${te.id}`,
+          user: te.employee_name || 'Employee',
+          action: 'logged time',
+          target: te.project_name || te.task_name || 'work',
+          created_at: te.created_at
+        });
+      });
+
+      // Sort by created_at desc and return top 6
+      return (items.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 6));
+    },
+    enabled: options?.enabled ?? true,
+    staleTime: 60 * 1000,
+  });
+};
+
+// New: Tasks aggregation for progress chart (last 4 weeks)
+export const useTasksForProgress = (options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: ['tasks-progress'],
+    queryFn: async () => {
+      if (!supabase) throw new Error('Supabase is not configured');
+
+      const now = new Date();
+      const start = new Date(now);
+      start.setDate(now.getDate() - 28);
+      const startIso = start.toISOString();
+
+      const { data, error } = await supabase.from('tasks').select('id, status, updated_at').gte('updated_at', startIso);
+      if (error) throw error;
+
+      // Create 4 weekly buckets
+      const buckets = [0,0,0,0].map(() => ({ completed:0, inProgress:0, pending:0 }));
+      (data || []).forEach((t: any) => {
+        const daysAgo = Math.floor((new Date().getTime() - new Date(t.updated_at).getTime()) / (1000*60*60*24));
+        const bucketIndex = Math.min(3, Math.floor(daysAgo / 7)); // 0..3
+        if (t.status === 'completed') buckets[3 - bucketIndex].completed++;
+        else if (t.status === 'in-progress') buckets[3 - bucketIndex].inProgress++;
+        else buckets[3 - bucketIndex].pending++;
+      });
+
+      // Map to chart-friendly format
+      return buckets.map((b, i) => ({ name: `Week ${i+1}`, completed: b.completed, inProgress: b.inProgress, pending: b.pending }));
+    },
+    enabled: options?.enabled ?? true,
+    staleTime: 2 * 60 * 1000,
+  });
+};
+
 // =====================================================
 // PROJECTS HOOKS
 // =====================================================

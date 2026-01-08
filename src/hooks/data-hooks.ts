@@ -35,6 +35,25 @@ export const useProjectStatusDistribution = () => {
   );
 };
 
+// Dashboard additions
+export const useTaskSummary = () => {
+  return useDataWithFallback(
+    (options) => supabaseHooks.useTaskSummary(options)
+  );
+};
+
+export const useRecentActivity = () => {
+  return useDataWithFallback(
+    (options) => supabaseHooks.useRecentActivity(options)
+  );
+};
+
+export const useTasksForProgress = () => {
+  return useDataWithFallback(
+    (options) => supabaseHooks.useTasksForProgress(options)
+  );
+};
+
 // =====================================================
 // PROJECTS HOOKS
 // =====================================================

@@ -42,6 +42,9 @@ import {
   useEmployees,
   useInventory,
   useInvoices,
+  useTaskSummary,
+  useRecentActivity,
+  useTasksForProgress,
 } from '@/hooks';
 
 // KPI Card Component
@@ -87,23 +90,7 @@ function KPICard({ title, value, change, changeLabel, icon, trend }: KPICardProp
   );
 }
 
-// Revenue Chart Data
-const revenueData = [
-  { month: 'Jan', revenue: 2400000, expenses: 1800000 },
-  { month: 'Feb', revenue: 2800000, expenses: 2100000 },
-  { month: 'Mar', revenue: 3200000, expenses: 2400000 },
-  { month: 'Apr', revenue: 2900000, expenses: 2200000 },
-  { month: 'May', revenue: 3500000, expenses: 2600000 },
-  { month: 'Jun', revenue: 4200000, expenses: 3100000 },
-];
 
-// Task Progress Data
-const taskProgressData = [
-  { name: 'Week 1', completed: 12, inProgress: 8, pending: 5 },
-  { name: 'Week 2', completed: 18, inProgress: 10, pending: 7 },
-  { name: 'Week 3', completed: 15, inProgress: 12, pending: 4 },
-  { name: 'Week 4', completed: 22, inProgress: 8, pending: 6 },
-];
 
 export default function DashboardPage() {
   const { t } = useTranslation();
@@ -117,25 +104,29 @@ export default function DashboardPage() {
   const { data: employees } = useEmployees();
   const { data: inventory } = useInventory();
   const { data: invoices } = useInvoices();
+  const { data: taskSummary } = useTaskSummary();
+  const { data: recentActivityList } = useRecentActivity();
+  const { data: tasksProgress } = useTasksForProgress();
 
   // Calculate derived data
   const activeProjects = recentProjects?.filter((p: any) => p.status === 'in-progress') || [];
   const lowStockItems = inventory?.filter((i: any) => i.stockStatus === 'low-stock' || i.stockStatus === 'out-of-stock') || [];
   const overdueInvoices = invoices?.filter((i: any) => i.status === 'overdue') || [];
-  // Project Status Data
-  const getProjectStatusData = () => {
-    const statusCounts = (recentProjects || []).reduce((acc: Record<string, number>, project: any) => {
-      acc[project.status] = (acc[project.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
 
-    return [
-      { name: 'In Progress', value: statusCounts['in-progress'] || 0, color: '#eab308' },
-      { name: 'Completed', value: statusCounts['completed'] || 0, color: '#22c55e' },
-      { name: 'Planning', value: statusCounts['planning'] || 0, color: '#3b82f6' },
-      { name: 'On Hold', value: statusCounts['on-hold'] || 0, color: '#f97316' },
-    ];
-  };
+  // Utilization (for budget KPI)
+  const utilization = stats?.totalBudget ? Math.round((stats.totalSpent / stats.totalBudget) * 100) : undefined;
+
+  // Project Status Chart data: map statuses to colors
+  const projectStatusChartData = (projectStatusData || []).map((s: any) => {
+    const colorMap: Record<string, string> = {
+      'in-progress': '#eab308',
+      'completed': '#22c55e',
+      'planning': '#3b82f6',
+      'on-hold': '#f97316',
+      'cancelled': '#ef4444'
+    };
+    return { name: s.status, count: s.count, color: colorMap[s.status] || '#64748b' };
+  });
   // Loading state
   if (statsLoading || projectsLoading || tasksLoading || revenueLoading || statusLoading) {
     return (
@@ -168,23 +159,17 @@ export default function DashboardPage() {
         <KPICard
           title={t('dashboard.activeProjects')}
           value={stats?.totalProjects || 0}
-          change={12}
-          changeLabel={t('dashboard.vsLastMonth')}
           icon={<Building2 className="h-6 w-6" />}
-          trend="up"
         />
         <KPICard
           title={t('dashboard.activeEmployees')}
           value={stats?.activeEmployees || 0}
-          change={5}
-          changeLabel={t('dashboard.vsLastMonth')}
           icon={<Users className="h-6 w-6" />}
-          trend="up"
         />
         <KPICard
           title={t('dashboard.totalBudget')}
           value={formatCurrency(stats?.totalBudget || 0)}
-          change={-3}
+          change={utilization}
           changeLabel={t('dashboard.utilization')}
           icon={<DollarSign className="h-6 w-6" />}
           trend="neutral"
@@ -192,10 +177,7 @@ export default function DashboardPage() {
         <KPICard
           title={t('dashboard.lowStockItems')}
           value={lowStockItems.length}
-          change={2}
-          changeLabel={t('dashboard.itemsNeedAttention')}
           icon={<Package className="h-6 w-6" />}
-          trend="down"
         />
       </div>
 
@@ -256,7 +238,7 @@ export default function DashboardPage() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={projectStatusData || []}
+                  data={projectStatusChartData || []}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -264,7 +246,7 @@ export default function DashboardPage() {
                   paddingAngle={2}
                   dataKey="count"
                 >
-                  {(projectStatusData || []).map((entry: any, index: number) => (
+                  {(projectStatusChartData || []).map((entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={entry.color || '#64748b'} />
                   ))}
                 </Pie>
@@ -368,10 +350,10 @@ export default function DashboardPage() {
               <Clock className="h-5 w-5 text-blue-500 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
-                  8 {t('dashboard.tasksDueThisWeek')}
+                  {taskSummary?.tasksDueThisWeek ?? 0} {t('dashboard.tasksDueThisWeek')}
                 </p>
                 <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
-                  3 {t('dashboard.highPriority')}
+                  {taskSummary?.highPriorityThisWeek ?? 0} {t('dashboard.highPriority')}
                 </p>
               </div>
             </div>
@@ -381,7 +363,7 @@ export default function DashboardPage() {
               <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-green-800 dark:text-green-300">
-                  5 {t('dashboard.tasksCompletedToday')}
+                  {taskSummary?.tasksCompletedToday ?? 0} {t('dashboard.tasksCompletedToday')}
                 </p>
                 <p className="text-xs text-green-600 dark:text-green-400 mt-0.5">
                   {t('dashboard.greatProgress')}
@@ -398,7 +380,7 @@ export default function DashboardPage() {
           <CardHeader title={t('dashboard.taskProgress')} description={t('dashboard.weeklyTaskCompletion')} />
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={recentTasks || []}>
+              <BarChart data={tasksProgress || []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:opacity-20" />
                 <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} />
                 <YAxis stroke="#94a3b8" fontSize={12} />
@@ -421,25 +403,24 @@ export default function DashboardPage() {
         <Card>
           <CardHeader title={t('dashboard.recentActivity')} description={t('dashboard.latestUpdates')} />
           <div className="space-y-4">
-            {[
-              { user: 'John Smith', action: t('dashboard.completedTask'), target: 'Foundation excavation', time: `5 ${t('dashboard.minutesAgo')}`, avatar: employees?.[0]?.avatar },
-              { user: 'Sarah Williams', action: t('dashboard.approvedInvoice'), target: 'INV-2024-001', time: `1 ${t('dashboard.hourAgo')}`, avatar: employees?.[1]?.avatar },
-              { user: 'Robert Johnson', action: t('dashboard.updatedProject'), target: 'Downtown Office Complex', time: `2 ${t('dashboard.hoursAgo')}`, avatar: employees?.[2]?.avatar },
-              { user: 'David Lee', action: t('dashboard.createdOrder'), target: 'ORD-2024-001', time: `3 ${t('dashboard.hoursAgo')}`, avatar: employees?.[3]?.avatar },
-              { user: 'Sarah Martinez', action: t('dashboard.uploadedDocument'), target: 'Safety Report', time: `4 ${t('dashboard.hoursAgo')}`, avatar: employees?.[4]?.avatar },
-            ].map((activity, index) => (
-              <div key={index} className="flex items-start gap-3">
-                <Avatar src={activity.avatar} name={activity.user} size="sm" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-surface-700 dark:text-surface-300">
-                    <span className="font-medium text-surface-900 dark:text-white">{activity.user}</span>
-                    {' '}{activity.action}{' '}
-                    <span className="font-medium text-primary-600 dark:text-primary-400">{activity.target}</span>
-                  </p>
-                  <p className="text-xs text-surface-500 mt-0.5">{activity.time}</p>
+            {(recentActivityList || []).map((activity: any, index: number) => {
+              const avatar = employees?.find((e: any) => e.name === activity.user)?.avatar;
+              // human friendly time label
+              const timeLabel = activity.created_at ? new Date(activity.created_at).toLocaleString() : '';
+              return (
+                <div key={activity.id || index} className="flex items-start gap-3">
+                  <Avatar src={avatar} name={activity.user} size="sm" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-surface-700 dark:text-surface-300">
+                      <span className="font-medium text-surface-900 dark:text-white">{activity.user}</span>
+                      {' '}{activity.action}{' '}
+                      <span className="font-medium text-primary-600 dark:text-primary-400">{activity.target}</span>
+                    </p>
+                    <p className="text-xs text-surface-500 mt-0.5">{timeLabel}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </Card>
       </div>
