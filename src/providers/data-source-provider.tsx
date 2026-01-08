@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { isSupabaseConfigured } from '@/lib/supabase';
 
 // Data source types
 export type DataSource = 'supabase' | 'demo';
@@ -16,7 +17,7 @@ const DataSourceContext = createContext<DataSourceContextType | undefined>(undef
 // Provider component
 export const DataSourceProvider = ({ children }: { children: ReactNode }) => {
   const [dataSource, setDataSource] = useState<DataSource>('demo'); // Default to demo for development
-  const [isSupabaseAvailable, setSupabaseAvailable] = useState(false);
+  const [isSupabaseAvailable, setSupabaseAvailable] = useState(isSupabaseConfigured());
 
   return (
     <DataSourceContext.Provider
