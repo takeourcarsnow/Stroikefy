@@ -420,6 +420,8 @@ export const getInventory = (filters?: { category?: string; stock_status?: strin
   return filtered;
 };
 
+export const inventory = getInventory();
+
 export const getOrders = (filters?: { status?: string }) => {
   let filtered = [...mockOrders];
 

@@ -296,3 +296,6 @@ export const getTasks = (filters?: { project_id?: string; status?: string; assig
 
   return filtered;
 };
+
+export const recentProjects = mockProjects.slice(0, 5);
+export const recentTasks = mockTasks.slice(0, 5);

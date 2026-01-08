@@ -379,3 +379,5 @@ export const getAttendance = (date?: string) => {
   }
   return mockAttendance;
 };
+
+export const employees = getEmployees();

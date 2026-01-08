@@ -321,6 +321,8 @@ export const getInvoices = (filters?: { status?: string; type?: string }) => {
   return filtered;
 };
 
+export const invoices = getInvoices();
+
 export const getExpenses = (filters?: { status?: string; category?: string }) => {
   let filtered = [...mockExpenses];
 
@@ -339,25 +341,22 @@ export const getBudgets = () => {
   return mockBudgets;
 };
 
-export const getMonthlyRevenue = () => {
-  // Mock monthly revenue data
-  return [
-    { month: 'Jan', revenue: 1200000 },
-    { month: 'Feb', revenue: 1350000 },
-    { month: 'Mar', revenue: 1180000 },
-    { month: 'Apr', revenue: 1420000 },
-    { month: 'May', revenue: 1380000 },
-    { month: 'Jun', revenue: 1520000 },
-    { month: 'Jul', revenue: 1450000 },
-    { month: 'Aug', revenue: 1580000 },
-    { month: 'Sep', revenue: 1620000 },
-    { month: 'Oct', revenue: 1480000 },
-    { month: 'Nov', revenue: 1550000 },
-    { month: 'Dec', revenue: 1680000 },
-  ];
-};
+export const monthlyRevenue = [
+  { month: 'Jan', revenue: 1200000 },
+  { month: 'Feb', revenue: 1350000 },
+  { month: 'Mar', revenue: 1180000 },
+  { month: 'Apr', revenue: 1420000 },
+  { month: 'May', revenue: 1380000 },
+  { month: 'Jun', revenue: 1520000 },
+  { month: 'Jul', revenue: 1450000 },
+  { month: 'Aug', revenue: 1580000 },
+  { month: 'Sep', revenue: 1620000 },
+  { month: 'Oct', revenue: 1480000 },
+  { month: 'Nov', revenue: 1550000 },
+  { month: 'Dec', revenue: 1680000 },
+];
 
-export const getProjectStatusDistribution = () => {
+export const projectStatusDistribution = (() => {
   const projects = mockBudgets.length;
   const completed = mockBudgets.filter(b => b.spent >= b.allocated * 0.95).length;
   const inProgress = projects - completed;
@@ -366,4 +365,4 @@ export const getProjectStatusDistribution = () => {
     { name: 'Completed', value: completed, color: '#10b981' },
     { name: 'In Progress', value: inProgress, color: '#3b82f6' },
   ];
-};
+})();

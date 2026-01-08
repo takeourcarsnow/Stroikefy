@@ -20,6 +20,35 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- =====================================================
+-- EMPLOYEES TABLE
+-- =====================================================
+CREATE TABLE IF NOT EXISTS employees (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    employee_id VARCHAR(50) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(50),
+    avatar VARCHAR(500),
+    position VARCHAR(255),
+    department VARCHAR(100),
+    type VARCHAR(50) DEFAULT 'full-time' CHECK (type IN ('full-time', 'part-time', 'contractor')),
+    status VARCHAR(50) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'on-leave', 'terminated')),
+    hire_date DATE,
+    salary DECIMAL(12, 2) DEFAULT 0,
+    skills TEXT[],
+    certifications TEXT[],
+    emergency_contact_name VARCHAR(255),
+    emergency_contact_phone VARCHAR(50),
+    emergency_contact_relationship VARCHAR(100),
+    address_street VARCHAR(255),
+    address_city VARCHAR(100),
+    address_state VARCHAR(50),
+    address_zip VARCHAR(20),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- =====================================================
 -- PROJECTS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS projects (
@@ -61,35 +90,6 @@ CREATE TABLE IF NOT EXISTS tasks (
     due_date DATE,
     estimated_hours DECIMAL(8, 2) DEFAULT 0,
     actual_hours DECIMAL(8, 2) DEFAULT 0,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- =====================================================
--- EMPLOYEES TABLE
--- =====================================================
-CREATE TABLE IF NOT EXISTS employees (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    employee_id VARCHAR(50) UNIQUE NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    phone VARCHAR(50),
-    avatar VARCHAR(500),
-    position VARCHAR(255),
-    department VARCHAR(100),
-    type VARCHAR(50) DEFAULT 'full-time' CHECK (type IN ('full-time', 'part-time', 'contractor')),
-    status VARCHAR(50) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'on-leave', 'terminated')),
-    hire_date DATE,
-    salary DECIMAL(12, 2) DEFAULT 0,
-    skills TEXT[],
-    certifications TEXT[],
-    emergency_contact_name VARCHAR(255),
-    emergency_contact_phone VARCHAR(50),
-    emergency_contact_relationship VARCHAR(100),
-    address_street VARCHAR(255),
-    address_city VARCHAR(100),
-    address_state VARCHAR(50),
-    address_zip VARCHAR(20),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
