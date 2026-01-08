@@ -31,7 +31,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { PROJECT_STATUS_COLORS } from '@/types';
+import { PROJECT_STATUS_COLORS, ProjectStatus } from '@/types';
 import Link from 'next/link';
 import {
   useDashboardStats,
@@ -97,21 +97,6 @@ const revenueData = [
   { month: 'Jun', revenue: 4200000, expenses: 3100000 },
 ];
 
-// Project Status Data
-const getProjectStatusData = () => {
-  const statusCounts = mockProjects.reduce((acc, project) => {
-    acc[project.status] = (acc[project.status] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  return [
-    { name: 'In Progress', value: statusCounts['in-progress'] || 0, color: '#eab308' },
-    { name: 'Completed', value: statusCounts['completed'] || 0, color: '#22c55e' },
-    { name: 'Planning', value: statusCounts['planning'] || 0, color: '#3b82f6' },
-    { name: 'On Hold', value: statusCounts['on-hold'] || 0, color: '#f97316' },
-  ];
-};
-
 // Task Progress Data
 const taskProgressData = [
   { name: 'Week 1', completed: 12, inProgress: 8, pending: 5 },
@@ -134,10 +119,23 @@ export default function DashboardPage() {
   const { data: invoices } = useInvoices();
 
   // Calculate derived data
-  const activeProjects = recentProjects?.filter(p => p.status === 'in-progress') || [];
-  const lowStockItems = inventory?.filter(i => i.stock_status === 'low-stock' || i.stock_status === 'out-of-stock') || [];
-  const overdueInvoices = invoices?.filter(i => i.status === 'overdue') || [];
+  const activeProjects = recentProjects?.filter((p: any) => p.status === 'in-progress') || [];
+  const lowStockItems = inventory?.filter((i: any) => i.stockStatus === 'low-stock' || i.stockStatus === 'out-of-stock') || [];
+  const overdueInvoices = invoices?.filter((i: any) => i.status === 'overdue') || [];
+  // Project Status Data
+  const getProjectStatusData = () => {
+    const statusCounts = (recentProjects || []).reduce((acc: Record<string, number>, project: any) => {
+      acc[project.status] = (acc[project.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
+    return [
+      { name: 'In Progress', value: statusCounts['in-progress'] || 0, color: '#eab308' },
+      { name: 'Completed', value: statusCounts['completed'] || 0, color: '#22c55e' },
+      { name: 'Planning', value: statusCounts['planning'] || 0, color: '#3b82f6' },
+      { name: 'On Hold', value: statusCounts['on-hold'] || 0, color: '#f97316' },
+    ];
+  };
   // Loading state
   if (statsLoading || projectsLoading || tasksLoading || revenueLoading || statusLoading) {
     return (
@@ -266,7 +264,7 @@ export default function DashboardPage() {
                   paddingAngle={2}
                   dataKey="count"
                 >
-                  {(projectStatusData || []).map((entry, index) => (
+                  {(projectStatusData || []).map((entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={entry.color || '#64748b'} />
                   ))}
                 </Pie>
@@ -292,7 +290,7 @@ export default function DashboardPage() {
             }
           />
           <div className="space-y-4">
-            {(recentProjects || []).filter(p => p.status === 'in-progress').slice(0, 4).map((project) => (
+            {(recentProjects || []).filter((p: any) => p.status === 'in-progress').slice(0, 4).map((project: any) => (
               <div
                 key={project.id}
                 className="flex items-center gap-4 p-4 rounded-lg bg-surface-50 dark:bg-surface-800/50 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
@@ -302,7 +300,7 @@ export default function DashboardPage() {
                     <h4 className="font-medium text-surface-900 dark:text-white truncate">
                       {project.name}
                     </h4>
-                    <Badge variant="custom" className={PROJECT_STATUS_COLORS[project.status]}>
+                    <Badge variant="custom" className={PROJECT_STATUS_COLORS[project.status as ProjectStatus]}>
                       {project.status}
                     </Badge>
                   </div>
@@ -344,7 +342,7 @@ export default function DashboardPage() {
                     {overdueInvoices.length} {overdueInvoices.length > 1 ? t('dashboard.overdueInvoices') : t('dashboard.overdueInvoice')}
                   </p>
                   <p className="text-xs text-red-600 dark:text-red-400 mt-0.5">
-                    {formatCurrency(overdueInvoices.reduce((sum, inv) => sum + inv.total, 0))} {t('dashboard.outstanding')}
+                    {formatCurrency(overdueInvoices.reduce((sum: number, inv: any) => sum + inv.total, 0))} {t('dashboard.outstanding')}
                   </p>
                 </div>
               </div>

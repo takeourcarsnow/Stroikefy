@@ -405,3 +405,34 @@ export const mockStockMovements: StockMovement[] = [
     createdAt: new Date('2024-03-15'),
   },
 ];
+
+export const getInventory = (filters?: { category?: string; stock_status?: string }) => {
+  let filtered = [...mockInventoryItems];
+
+  if (filters?.category) {
+    filtered = filtered.filter(i => i.category === filters.category);
+  }
+
+  if (filters?.stock_status) {
+    filtered = filtered.filter(i => i.stockStatus === filters.stock_status);
+  }
+
+  return filtered;
+};
+
+export const getOrders = (filters?: { status?: string }) => {
+  let filtered = [...mockOrders];
+
+  if (filters?.status) {
+    filtered = filtered.filter(o => o.status === filters.status);
+  }
+
+  return filtered;
+};
+
+export const getStockMovements = (itemId?: string) => {
+  if (itemId) {
+    return mockStockMovements.filter(m => m.inventoryItemId === itemId);
+  }
+  return mockStockMovements;
+};

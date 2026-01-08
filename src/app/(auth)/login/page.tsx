@@ -18,7 +18,7 @@ import {
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, setPermissions } = useAuthStore();
+  const { loginWithUser } = useAuthStore();
   const [email, setEmail] = useState('admin@stroikefy.com');
   const [password, setPassword] = useState('password');
   const [showPassword, setShowPassword] = useState(false);
@@ -37,8 +37,7 @@ export default function LoginPage() {
     const user = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
     
     if (user && password === 'password') {
-      login(user);
-      setPermissions(user.permissions);
+      loginWithUser(user);
       router.push('/dashboard');
     } else {
       setError('Invalid email or password');

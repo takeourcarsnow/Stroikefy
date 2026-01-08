@@ -58,6 +58,7 @@ export const mockDocuments: Document[] = [
     id: 'doc-001',
     name: 'Downtown Office Complex - Main Contract',
     type: 'contract',
+    status: 'approved',
     fileType: 'pdf',
     fileSize: 2450000,
     url: '/documents/contract-001.pdf',
@@ -76,6 +77,7 @@ export const mockDocuments: Document[] = [
     id: 'doc-002',
     name: 'Building Permit - Downtown Office',
     type: 'permit',
+    status: 'approved',
     fileType: 'pdf',
     fileSize: 1200000,
     url: '/documents/permit-001.pdf',
@@ -94,6 +96,7 @@ export const mockDocuments: Document[] = [
     id: 'doc-003',
     name: 'Floor Plans - Levels 1-5',
     type: 'blueprint',
+    status: 'approved',
     fileType: 'dwg',
     fileSize: 15800000,
     url: '/documents/blueprint-001.dwg',
@@ -112,6 +115,7 @@ export const mockDocuments: Document[] = [
     id: 'doc-004',
     name: 'Safety Inspection Report - March 2024',
     type: 'safety',
+    status: 'approved',
     fileType: 'pdf',
     fileSize: 890000,
     url: '/documents/safety-001.pdf',
@@ -130,6 +134,7 @@ export const mockDocuments: Document[] = [
     id: 'doc-005',
     name: 'Site Progress Photo - Week 12',
     type: 'photo',
+    status: 'approved',
     fileType: 'jpg',
     fileSize: 4500000,
     url: '/documents/photo-001.jpg',
@@ -148,6 +153,7 @@ export const mockDocuments: Document[] = [
     id: 'doc-006',
     name: 'Q1 2024 Financial Report',
     type: 'report',
+    status: 'approved',
     fileType: 'xlsx',
     fileSize: 2100000,
     url: '/documents/report-001.xlsx',
@@ -164,6 +170,7 @@ export const mockDocuments: Document[] = [
     id: 'doc-007',
     name: 'Riverside Tower - Subcontractor Agreement',
     type: 'contract',
+    status: 'pending',
     fileType: 'pdf',
     fileSize: 1850000,
     url: '/documents/contract-002.pdf',
@@ -182,6 +189,7 @@ export const mockDocuments: Document[] = [
     id: 'doc-008',
     name: 'OSHA Compliance Certificate',
     type: 'certification',
+    status: 'approved',
     fileType: 'pdf',
     fileSize: 560000,
     url: '/documents/cert-001.pdf',
@@ -198,6 +206,7 @@ export const mockDocuments: Document[] = [
     id: 'doc-009',
     name: 'Material Receipt - Steel Delivery',
     type: 'receipt',
+    status: 'approved',
     fileType: 'pdf',
     fileSize: 320000,
     url: '/documents/receipt-001.pdf',
@@ -215,6 +224,7 @@ export const mockDocuments: Document[] = [
     id: 'doc-010',
     name: 'Invoice - INV-2024-002',
     type: 'invoice',
+    status: 'pending',
     fileType: 'pdf',
     fileSize: 450000,
     url: '/documents/invoice-001.pdf',
@@ -229,3 +239,25 @@ export const mockDocuments: Document[] = [
     updatedAt: new Date('2024-03-01'),
   },
 ];
+
+export const getFolders = () => {
+  return mockFolders;
+};
+
+export const getDocuments = (filters?: { folder_id?: string; project_id?: string; type?: string }) => {
+  let filtered = [...mockDocuments];
+
+  if (filters?.folder_id) {
+    filtered = filtered.filter(d => d.folderId === filters.folder_id);
+  }
+
+  if (filters?.project_id) {
+    filtered = filtered.filter(d => d.projectId === filters.project_id);
+  }
+
+  if (filters?.type) {
+    filtered = filtered.filter(d => d.type === filters.type);
+  }
+
+  return filtered;
+};

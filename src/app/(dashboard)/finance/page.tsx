@@ -81,9 +81,9 @@ export default function FinancePage() {
   // Calculate stats
   const totalInvoiced = mockInvoices.reduce((sum, inv) => sum + inv.total, 0);
   const totalPaid = mockInvoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.total, 0);
-  const totalPending = mockInvoices.filter(inv => inv.status === 'pending').reduce((sum, inv) => sum + inv.total, 0);
+  const totalPending = mockInvoices.filter(inv => inv.status === 'sent').reduce((sum, inv) => sum + inv.total, 0);
   const totalExpenses = mockExpenses.reduce((sum, exp) => sum + exp.amount, 0);
-  const totalBudget = mockBudgets.reduce((sum, b) => sum + b.total, 0);
+  const totalBudget = mockBudgets.reduce((sum, b) => sum + b.totalBudget, 0);
   const totalSpent = mockBudgets.reduce((sum, b) => sum + b.spent, 0);
 
   // Chart data
@@ -163,7 +163,7 @@ export default function FinancePage() {
       key: 'category',
       header: 'Category',
       render: (expense: Expense) => (
-        <Badge variant="outline">{expense.category}</Badge>
+        <Badge variant="default">{expense.category}</Badge>
       ),
     },
     {
@@ -179,7 +179,7 @@ export default function FinancePage() {
     {
       key: 'submittedBy',
       header: 'Submitted By',
-      render: (expense: Expense) => expense.submittedBy,
+      render: (expense: Expense) => expense.employeeName,
     },
     {
       key: 'status',
@@ -431,7 +431,7 @@ export default function FinancePage() {
             </Card>
           ) : (
             <EmptyState
-              icon={FileText}
+              icon={<FileText className="h-12 w-12" />}
               title="No invoices found"
               description="Create your first invoice to get started"
               action={
@@ -467,7 +467,7 @@ export default function FinancePage() {
             </Card>
           ) : (
             <EmptyState
-              icon={Receipt}
+              icon={<Receipt className="h-12 w-12" />}
               title="No expenses found"
               description="Record your first expense"
               action={
@@ -507,7 +507,7 @@ export default function FinancePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {mockBudgets.map(budget => {
               const project = mockProjects.find(p => p.id === budget.projectId);
-              const percentage = (budget.spent / budget.total) * 100;
+              const percentage = (budget.spent / budget.totalBudget) * 100;
               const isOverBudget = percentage > 100;
               
               return (
@@ -515,7 +515,7 @@ export default function FinancePage() {
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h3 className="font-semibold text-surface-900 dark:text-white">{project?.name || 'Project Budget'}</h3>
-                      <p className="text-sm text-surface-500">{budget.period}</p>
+                      <p className="text-sm text-surface-500">{budget.projectName}</p>
                     </div>
                     <Badge variant={isOverBudget ? 'danger' : percentage > 80 ? 'warning' : 'success'}>
                       {isOverBudget ? 'Over Budget' : percentage > 80 ? 'Near Limit' : 'On Track'}
@@ -526,10 +526,10 @@ export default function FinancePage() {
                     <div className="flex justify-between text-sm">
                       <span className="text-surface-500">Spent</span>
                       <span className="font-medium text-surface-900 dark:text-white">
-                        {formatCurrency(budget.spent)} / {formatCurrency(budget.total)}
+                        {formatCurrency(budget.spent)} / {formatCurrency(budget.totalBudget)}
                       </span>
                     </div>
-                    <Progress value={Math.min(percentage, 100)} variant={isOverBudget ? 'danger' : percentage > 80 ? 'warning' : 'primary'} />
+                    <Progress value={Math.min(percentage, 100)} variant={isOverBudget ? 'danger' : percentage > 80 ? 'warning' : 'default'} />
                     
                     <div className="pt-3 border-t border-surface-200 dark:border-surface-700">
                       <p className="text-sm text-surface-500 mb-2">Categories</p>

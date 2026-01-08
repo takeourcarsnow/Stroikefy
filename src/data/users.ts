@@ -48,3 +48,24 @@ export const mockUsers: User[] = [
 ];
 
 export const currentUser: User = mockUsers[0];
+
+export const getUsers = () => {
+  return mockUsers;
+};
+
+export const getUser = (id: string) => {
+  return mockUsers.find(u => u.id === id);
+};
+
+export const getDashboardStats = () => {
+  return {
+    totalProjects: 6,
+    activeProjects: 4,
+    totalEmployees: 8,
+    totalRevenue: 12500000,
+    monthlyRevenue: 1350000,
+    pendingInvoices: 3,
+    lowStockItems: 2,
+    completedTasks: 45,
+  };
+};

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Card, CardHeader, Button, Badge, Input, Select, Tabs, Table, Modal, ModalFooter, Progress, EmptyState, Textarea } from '@/components/ui';
 import { cn, formatCurrency, formatDate } from '@/lib/utils';
 import { mockInventoryItems, mockOrders } from '@/data';
-import { INVENTORY_STATUS_COLORS, ORDER_STATUS_COLORS, InventoryItem, Order } from '@/types';
+import { STOCK_STATUS_COLORS, ORDER_STATUS_COLORS, InventoryItem, Order } from '@/types';
 import {
   Plus,
   Search,
@@ -35,7 +35,7 @@ export default function InventoryPage() {
   const tabs = [
     { id: 'inventory', label: 'Inventory', count: mockInventoryItems.length },
     { id: 'orders', label: 'Orders', count: mockOrders.length },
-    { id: 'low-stock', label: 'Low Stock', count: mockInventoryItems.filter(i => i.status === 'low-stock' || i.status === 'out-of-stock').length },
+    { id: 'low-stock', label: 'Low Stock', count: mockInventoryItems.filter(i => i.stockStatus === 'low-stock' || i.stockStatus === 'out-of-stock').length },
   ];
 
   const categoryOptions = [
@@ -60,17 +60,17 @@ export default function InventoryPage() {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.sku.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
-    const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+    const matchesStatus = statusFilter === 'all' || item.stockStatus === statusFilter;
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
-  const lowStockItems = mockInventoryItems.filter(i => i.status === 'low-stock' || i.status === 'out-of-stock');
+  const lowStockItems = mockInventoryItems.filter(i => i.stockStatus === 'low-stock' || i.stockStatus === 'out-of-stock');
 
   // Stats
   const totalItems = mockInventoryItems.length;
   const totalValue = mockInventoryItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
   const lowStockCount = lowStockItems.length;
-  const pendingOrders = mockOrders.filter(o => o.status === 'pending' || o.status === 'processing').length;
+  const pendingOrders = mockOrders.filter(o => o.status === 'draft' || o.status === 'pending').length;
 
   const inventoryColumns = [
     {
@@ -92,7 +92,7 @@ export default function InventoryPage() {
       key: 'category',
       header: 'Category',
       render: (item: InventoryItem) => (
-        <Badge variant="outline">{item.category}</Badge>
+        <Badge variant="default">{item.category}</Badge>
       ),
     },
     {
@@ -119,8 +119,8 @@ export default function InventoryPage() {
       key: 'status',
       header: 'Status',
       render: (item: InventoryItem) => (
-        <Badge variant="custom" className={INVENTORY_STATUS_COLORS[item.status]}>
-          {item.status.replace('-', ' ')}
+        <Badge variant="custom" className={STOCK_STATUS_COLORS[item.stockStatus]}>
+          {item.stockStatus.replace('-', ' ')}
         </Badge>
       ),
     },
@@ -158,17 +158,17 @@ export default function InventoryPage() {
     {
       key: 'supplier',
       header: 'Supplier',
-      render: (order: Order) => order.supplierName,
+      render: (order: Order) => order.supplier,
     },
     {
       key: 'total',
       header: 'Total',
-      render: (order: Order) => formatCurrency(order.totalAmount),
+      render: (order: Order) => formatCurrency(order.total),
     },
     {
       key: 'orderDate',
       header: 'Order Date',
-      render: (order: Order) => formatDate(order.orderDate),
+      render: (order: Order) => order.orderDate ? formatDate(order.orderDate) : '-',
     },
     {
       key: 'expectedDelivery',
@@ -294,7 +294,7 @@ export default function InventoryPage() {
             </Card>
           ) : (
             <EmptyState
-              icon={Package}
+              icon={<Package className="h-12 w-12" />}
               title="No items found"
               description="Try adjusting your search or add new inventory items"
               action={
@@ -322,7 +322,7 @@ export default function InventoryPage() {
             </Card>
           ) : (
             <EmptyState
-              icon={ShoppingCart}
+              icon={<ShoppingCart className="h-12 w-12" />}
               title="No orders yet"
               description="Create your first order to restock inventory"
               action={
@@ -352,8 +352,8 @@ export default function InventoryPage() {
                         <p className="text-sm text-surface-500">{item.sku}</p>
                       </div>
                     </div>
-                    <Badge variant="custom" className={INVENTORY_STATUS_COLORS[item.status]}>
-                      {item.status.replace('-', ' ')}
+                    <Badge variant="custom" className={STOCK_STATUS_COLORS[item.stockStatus]}>
+                      {item.stockStatus.replace('-', ' ')}
                     </Badge>
                   </div>
                   
@@ -368,7 +368,7 @@ export default function InventoryPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-surface-500">Reorder Quantity</span>
-                      <span className="font-medium text-surface-900 dark:text-white">{item.reorderQuantity} {item.unit}</span>
+                      <span className="font-medium text-surface-900 dark:text-white">{item.maxQuantity} {item.unit}</span>
                     </div>
                   </div>
 
@@ -464,7 +464,7 @@ export default function InventoryPage() {
                 </div>
                 <div>
                   <p className="text-sm text-surface-500">Suggested Qty</p>
-                  <p className="font-medium text-surface-900 dark:text-white">{selectedItem.reorderQuantity} {selectedItem.unit}</p>
+                  <p className="font-medium text-surface-900 dark:text-white">{selectedItem.maxQuantity} {selectedItem.unit}</p>
                 </div>
               </div>
             </>
@@ -479,8 +479,8 @@ export default function InventoryPage() {
           <Input 
             label="Quantity" 
             type="number" 
-            placeholder={selectedItem?.reorderQuantity?.toString() || "0"} 
-            defaultValue={selectedItem?.reorderQuantity}
+            placeholder={selectedItem?.maxQuantity?.toString() || "0"} 
+            defaultValue={selectedItem?.maxQuantity}
           />
           <Input label="Supplier" placeholder={selectedItem?.supplier || "Supplier name"} defaultValue={selectedItem?.supplier} />
           <Input label="Expected Delivery Date" type="date" />

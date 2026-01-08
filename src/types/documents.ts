@@ -11,10 +11,13 @@ export type DocumentType =
   | 'certification'
   | 'other';
 
+export type DocumentStatus = 'draft' | 'pending' | 'approved' | 'rejected' | 'archived';
+
 export interface Document {
   id: string;
   name: string;
   type: DocumentType;
+  status: DocumentStatus;
   fileType: string;
   fileSize: number;
   url: string;
@@ -55,15 +58,10 @@ export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
   'other': 'Other',
 };
 
-export const DOCUMENT_TYPE_COLORS: Record<DocumentType, string> = {
-  'contract': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-  'permit': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-  'blueprint': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-  'report': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-  'invoice': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
-  'receipt': 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300',
-  'photo': 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300',
-  'safety': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-  'certification': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
-  'other': 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300',
+export const DOCUMENT_STATUS_COLORS: Record<DocumentStatus, string> = {
+  'draft': 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
+  'pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+  'approved': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+  'rejected': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+  'archived': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
 };

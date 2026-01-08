@@ -256,3 +256,43 @@ export const mockTasks: Task[] = [
 mockProjects.forEach(project => {
   project.tasks = mockTasks.filter(task => task.projectId === project.id);
 });
+
+export const getProjects = (filters?: { status?: string; priority?: string; employee_id?: string }) => {
+  let filtered = [...mockProjects];
+
+  if (filters?.status) {
+    filtered = filtered.filter(p => p.status === filters.status);
+  }
+
+  if (filters?.priority) {
+    filtered = filtered.filter(p => p.priority === filters.priority);
+  }
+
+  if (filters?.employee_id) {
+    filtered = filtered.filter(p => p.managerId === filters.employee_id);
+  }
+
+  return filtered;
+};
+
+export const getProject = (id: string) => {
+  return mockProjects.find(p => p.id === id);
+};
+
+export const getTasks = (filters?: { project_id?: string; status?: string; assignee_id?: string }) => {
+  let filtered = [...mockTasks];
+
+  if (filters?.project_id) {
+    filtered = filtered.filter(t => t.projectId === filters.project_id);
+  }
+
+  if (filters?.status) {
+    filtered = filtered.filter(t => t.status === filters.status);
+  }
+
+  if (filters?.assignee_id) {
+    filtered = filtered.filter(t => t.assigneeId === filters.assignee_id);
+  }
+
+  return filtered;
+};

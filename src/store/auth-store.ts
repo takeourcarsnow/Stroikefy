@@ -9,8 +9,10 @@ interface AuthStore {
   isLoading: boolean;
   permissions: RolePermissions | null;
   login: (email: string, password: string) => Promise<boolean>;
+  loginWithUser: (user: User) => void;
   logout: () => void;
   setUser: (user: User | null) => void;
+  setPermissions: (permissions: RolePermissions | null) => void;
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -43,6 +45,14 @@ export const useAuthStore = create<AuthStore>()(
         set({ isLoading: false });
         return false;
       },
+
+      loginWithUser: (user: User) => {
+        set({ 
+          user, 
+          isAuthenticated: true, 
+          permissions: ROLE_PERMISSIONS[user.role],
+        });
+      },
       
       logout: () => {
         set({ 
@@ -58,6 +68,10 @@ export const useAuthStore = create<AuthStore>()(
           isAuthenticated: !!user,
           permissions: user ? ROLE_PERMISSIONS[user.role] : null,
         });
+      },
+
+      setPermissions: (permissions) => {
+        set({ permissions });
       },
     }),
     {

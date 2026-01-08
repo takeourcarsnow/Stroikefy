@@ -329,3 +329,53 @@ export const mockAttendance: Attendance[] = [
     notes: 'Approved medical leave',
   },
 ];
+
+export const getEmployees = (filters?: { status?: string; department?: string; project_id?: string }) => {
+  let filtered = [...mockEmployees];
+
+  if (filters?.status) {
+    filtered = filtered.filter(e => e.status === filters.status);
+  }
+
+  if (filters?.department) {
+    filtered = filtered.filter(e => e.department === filters.department);
+  }
+
+  if (filters?.project_id) {
+    filtered = filtered.filter(e => e.projectIds.includes(filters.project_id!));
+  }
+
+  return filtered;
+};
+
+export const getEmployee = (id: string) => {
+  return mockEmployees.find(e => e.id === id);
+};
+
+export const getTimeEntries = (filters?: { employee_id?: string; project_id?: string; date_range?: { start: string; end: string } }) => {
+  let filtered = [...mockTimeEntries];
+
+  if (filters?.employee_id) {
+    filtered = filtered.filter(t => t.employeeId === filters.employee_id);
+  }
+
+  if (filters?.project_id) {
+    filtered = filtered.filter(t => t.projectId === filters.project_id);
+  }
+
+  if (filters?.date_range) {
+    const start = new Date(filters.date_range.start);
+    const end = new Date(filters.date_range.end);
+    filtered = filtered.filter(t => t.date >= start && t.date <= end);
+  }
+
+  return filtered;
+};
+
+export const getAttendance = (date?: string) => {
+  if (date) {
+    const targetDate = new Date(date);
+    return mockAttendance.filter(a => a.date.toDateString() === targetDate.toDateString());
+  }
+  return mockAttendance;
+};

@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import { Card, CardHeader, Button, Badge, Select, Modal, ModalFooter, FileUpload, Table, Alert } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { parseExcelFile, exportToExcel, mapRowToEmployee, mapRowToInventoryItem, mapRowToTask, getEmployeeSampleTemplate, getInventorySampleTemplate, getTaskSampleTemplate } from '@/lib/excel';
+import { parseExcelFile, exportToExcel, mapEmployeeRow, mapInventoryRow, mapTaskRow, downloadSampleTemplate } from '@/lib/excel';
 import { mockProjects, mockEmployees, mockInventoryItems } from '@/data';
 import {
   Upload,
@@ -63,38 +63,22 @@ export default function ImportExportPage() {
 
     setIsProcessing(true);
     try {
-      const data = await parseExcelFile(selectedFile);
+      const mapper = (importType === 'employees' 
+        ? mapEmployeeRow 
+        : importType === 'inventory' 
+        ? mapInventoryRow 
+        : mapTaskRow) as unknown as (row: Record<string, unknown>, index: number) => any;
+
+      const result = await parseExcelFile(selectedFile, mapper);
       
-      const result: ImportResult = {
-        success: 0,
-        failed: 0,
-        errors: [],
-        data: [],
+      const importResult: ImportResult = {
+        success: result.successRows,
+        failed: result.totalRows - result.successRows,
+        errors: result.errors,
+        data: result.data,
       };
 
-      const mapper = importType === 'employees' 
-        ? mapRowToEmployee 
-        : importType === 'inventory' 
-        ? mapRowToInventoryItem 
-        : mapRowToTask;
-
-      data.forEach((row, index) => {
-        try {
-          const mapped = mapper(row);
-          if (mapped) {
-            result.data.push(mapped);
-            result.success++;
-          } else {
-            result.failed++;
-            result.errors.push(`Row ${index + 2}: Invalid data`);
-          }
-        } catch (err: any) {
-          result.failed++;
-          result.errors.push(`Row ${index + 2}: ${err.message}`);
-        }
-      });
-
-      setImportResult(result);
+      setImportResult(importResult);
     } catch (err: any) {
       setImportResult({
         success: 0,
@@ -112,13 +96,7 @@ export default function ImportExportPage() {
   };
 
   const downloadTemplate = () => {
-    const template = importType === 'employees' 
-      ? getEmployeeSampleTemplate()
-      : importType === 'inventory'
-      ? getInventorySampleTemplate()
-      : getTaskSampleTemplate();
-
-    exportToExcel(template, `${importType}_template`);
+    downloadSampleTemplate(importType);
   };
 
   const resetImport = () => {

@@ -32,12 +32,24 @@ import {
 
 const getFileIcon = (type: DocumentType) => {
   switch (type) {
-    case 'image':
-      return <FileImage className="h-8 w-8 text-purple-500" />;
-    case 'spreadsheet':
-      return <FileSpreadsheet className="h-8 w-8 text-green-500" />;
-    case 'pdf':
+    case 'contract':
+      return <FileText className="h-8 w-8 text-purple-500" />;
+    case 'permit':
+      return <FileText className="h-8 w-8 text-green-500" />;
+    case 'blueprint':
+      return <FileText className="h-8 w-8 text-blue-500" />;
+    case 'report':
+      return <FileSpreadsheet className="h-8 w-8 text-yellow-500" />;
+    case 'invoice':
+      return <FileText className="h-8 w-8 text-orange-500" />;
+    case 'receipt':
+      return <FileText className="h-8 w-8 text-pink-500" />;
+    case 'photo':
+      return <FileImage className="h-8 w-8 text-cyan-500" />;
+    case 'safety':
       return <FileText className="h-8 w-8 text-red-500" />;
+    case 'certification':
+      return <FileText className="h-8 w-8 text-indigo-500" />;
     default:
       return <File className="h-8 w-8 text-blue-500" />;
   }
@@ -45,12 +57,24 @@ const getFileIcon = (type: DocumentType) => {
 
 const getFileIconSmall = (type: DocumentType) => {
   switch (type) {
-    case 'image':
-      return <FileImage className="h-5 w-5 text-purple-500" />;
-    case 'spreadsheet':
-      return <FileSpreadsheet className="h-5 w-5 text-green-500" />;
-    case 'pdf':
+    case 'contract':
+      return <FileText className="h-5 w-5 text-purple-500" />;
+    case 'permit':
+      return <FileText className="h-5 w-5 text-green-500" />;
+    case 'blueprint':
+      return <FileText className="h-5 w-5 text-blue-500" />;
+    case 'report':
+      return <FileSpreadsheet className="h-5 w-5 text-yellow-500" />;
+    case 'invoice':
+      return <FileText className="h-5 w-5 text-orange-500" />;
+    case 'receipt':
+      return <FileText className="h-5 w-5 text-pink-500" />;
+    case 'photo':
+      return <FileImage className="h-5 w-5 text-cyan-500" />;
+    case 'safety':
       return <FileText className="h-5 w-5 text-red-500" />;
+    case 'certification':
+      return <FileText className="h-5 w-5 text-indigo-500" />;
     default:
       return <File className="h-5 w-5 text-blue-500" />;
   }
@@ -66,10 +90,15 @@ export default function DocumentsPage() {
 
   const typeOptions = [
     { value: 'all', label: 'All Types' },
-    { value: 'document', label: 'Documents' },
-    { value: 'pdf', label: 'PDFs' },
-    { value: 'image', label: 'Images' },
-    { value: 'spreadsheet', label: 'Spreadsheets' },
+    { value: 'contract', label: 'Contracts' },
+    { value: 'permit', label: 'Permits' },
+    { value: 'blueprint', label: 'Blueprints' },
+    { value: 'report', label: 'Reports' },
+    { value: 'invoice', label: 'Invoices' },
+    { value: 'receipt', label: 'Receipts' },
+    { value: 'photo', label: 'Photos' },
+    { value: 'safety', label: 'Safety' },
+    { value: 'certification', label: 'Certifications' },
     { value: 'other', label: 'Other' },
   ];
 
@@ -96,7 +125,7 @@ export default function DocumentsPage() {
 
   // Stats
   const totalDocs = mockDocuments.length;
-  const totalSize = mockDocuments.reduce((sum, doc) => sum + doc.size, 0);
+  const totalSize = mockDocuments.reduce((sum, doc) => sum + doc.fileSize, 0);
   const recentDocs = [...mockDocuments].sort((a, b) => 
     new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   ).slice(0, 5);
@@ -276,7 +305,7 @@ export default function DocumentsPage() {
         
         {filteredDocuments.length === 0 ? (
           <EmptyState
-            icon={FileText}
+            icon={<FileText className="h-8 w-8" />}
             title="No documents found"
             description="Upload your first document or adjust your search"
             action={
@@ -300,7 +329,7 @@ export default function DocumentsPage() {
                   <h3 className="font-medium text-surface-900 dark:text-white text-center truncate" title={doc.name}>
                     {doc.name}
                   </h3>
-                  <p className="text-xs text-surface-500 text-center mt-1">{formatFileSize(doc.size)}</p>
+                  <p className="text-xs text-surface-500 text-center mt-1">{formatFileSize(doc.fileSize)}</p>
                   <div className="flex items-center justify-center gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button className="p-1.5 hover:bg-surface-100 dark:hover:bg-surface-700 rounded">
                       <Eye className="h-4 w-4 text-surface-500" />
@@ -344,7 +373,7 @@ export default function DocumentsPage() {
                         <span className="text-surface-600 dark:text-surface-400">{project?.name || '-'}</span>
                       </td>
                       <td className="p-4 hidden md:table-cell">
-                        <span className="text-surface-600 dark:text-surface-400">{formatFileSize(doc.size)}</span>
+                        <span className="text-surface-600 dark:text-surface-400">{formatFileSize(doc.fileSize)}</span>
                       </td>
                       <td className="p-4 hidden lg:table-cell">
                         <span className="text-surface-600 dark:text-surface-400">{formatDate(doc.updatedAt)}</span>
